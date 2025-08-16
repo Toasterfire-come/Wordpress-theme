@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contact - StockScan Pro</title>
+    <style>
+    /*
+Theme Name: Stock Scanner Pro - React Conversion
+Description: Complete WordPress theme converted from React Stock Scanner application with all features including Dashboard, Stock Scanner, Market Overview, Watchlist, Portfolio, News, and all supporting pages.
+Version: 1.0.0
+Author: Stock Scanner Team
+*/
+
+/* CSS Variables - Professional Finance Theme (matching React app) */
+:root {
+  --primary-emerald: #059669;
+  --primary-emerald-light: #10b981;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --red-600: #dc2626;
+  --red-100: #fee2e2;
+  --red-800: #991b1b;
+  --emerald-100: #dcfce7;
+  --emerald-400: #34d399;
+  --emerald-600: #059669;
+  --emerald-800: #065f46;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: var(--slate-800);
+  background-color: var(--slate-50);
+}
+
+/* Layout Structure */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--slate-50);
+}
+
+.sidebar-container {
+  width: 256px;
+  background-color: var(--slate-900);
+  color: white;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.sidebar-collapsed {
+  width: 64px;
+}
+
+.main-content-area {
+  flex: 1;
+  margin-left: 256px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content-area.sidebar-collapsed {
+  margin-left: 64px;
+}
+
+.no-sidebar .main-content-area {
+  margin-left: 0;
+}
+
+/* Header Styles */
+.site-header {
+  background-color: var(--slate-900);
+  color: white;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--slate-700);
+}
+
+.header-content {
+  padding: 1rem 1.5rem;
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: white;
+}
+
+.logo-icon {
+  background-color: var(--primary-emerald);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.logo-text p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 24rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  background-color: var(--slate-800);
+  border: 1px solid var(--slate-600);
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 0.875rem;
+}
+
+.search-input::placeholder {
+  color: var(--slate-400);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-emerald);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--slate-400);
+  width: 1rem;
+  height: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.market-status {
+  text-align: right;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .market-status {
+    display: block;
+  }
+}
+
+.market-label {
+  font-size: 0.875rem;
+  color: var(--slate-300);
+}
+
+.market-value {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.header-btn {
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.header-btn:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background-color: var(--red-600);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  border-radius: 9999px;
+  min-width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.live-badge {
+  background-color: var(--primary-emerald);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  margin-left: 0.25rem;
+}
+
+/* Full Navigation */
+.full-nav {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--slate-700);
+}
+
+.nav-list {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--slate-300);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-item a:hover,
+.nav-item a.current {
+  background-color: var(--primary-emerald);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Sidebar Styles */
+.sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--slate-700);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-info h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.brand-info p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  padding: 0.25rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.sidebar-nav {
+  padding: 1rem;
+  flex: 1;
+}
+
+.nav-section {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.section-title:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.nav-links {
+  margin-top: 0.25rem;
+}
+
+.nav-links.collapsed {
+  display: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  color: var(--slate-300);
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
+}
+
+.nav-link:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.nav-link.active {
+  background-color: var(--primary-emerald);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.sidebar-collapsed .nav-link {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.sidebar-collapsed .nav-link span:not(.nav-icon) {
+  display: none;
+}
+
+.sidebar-collapsed .section-title {
+  display: none;
+}
+
+.sidebar-collapsed .brand-info {
+  display: none;
+}
+
+/* Upgrade Card */
+.upgrade-card {
+  margin: 1rem;
+  padding: 0.75rem;
+  background-color: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.sidebar-collapsed .upgrade-card {
+  display: none;
+}
+
+.upgrade-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--emerald-400);
+  margin: 0 auto 0.5rem;
+}
+
+.upgrade-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.upgrade-subtitle {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin-bottom: 0.75rem;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.upgrade-btn:hover {
+  background-color: var(--primary-emerald-light);
+  color: white;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--slate-800);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-description {
+  color: var(--slate-500);
+  font-size: 0.875rem;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 100%);
+  color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .hero-text h1 {
+    font-size: 2.5rem;
+  }
+}
+
+.hero-text p {
+  font-size: 1.125rem;
+  color: var(--slate-300);
+  margin: 0;
+}
+
+.hero-stats {
+  text-align: right;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--emerald-400);
+}
+
+.stat-change {
+  font-size: 0.875rem;
+  color: var(--emerald-400);
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-1 { grid-template-columns: 1fr; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+/* Metric Cards */
+.metric-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--slate-600);
+}
+
+.metric-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--slate-400);
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-bottom: 0.25rem;
+}
+
+.metric-change {
+  font-size: 0.75rem;
+  color: var(--emerald-600);
+}
+
+.metric-change.negative {
+  color: var(--red-600);
+}
+
+/* Tables */
+.table-container {
+  background: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 1.5rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--slate-200);
+  background-color: var(--slate-50);
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--slate-800);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-300);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background-color: var(--slate-100);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.table th {
+  background-color: var(--slate-50);
+  font-weight: 600;
+  color: var(--slate-700);
+  font-size: 0.875rem;
+}
+
+.table tbody tr:hover {
+  background-color: var(--slate-50);
+}
+
+.table-cell-right {
+  text-align: right;
+}
+
+.table-cell-center {
+  text-align: center;
+}
+
+/* Stock-specific styling */
+.symbol {
+  font-weight: 600;
+  color: var(--slate-900);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.symbol-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.symbol-icon.positive {
+  color: var(--emerald-600);
+}
+
+.symbol-icon.negative {
+  color: var(--red-600);
+}
+
+.company-name {
+  color: var(--slate-600);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.change {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+.change.positive {
+  color: var(--emerald-600);
+}
+
+.change.negative {
+  color: var(--red-600);
+}
+
+.change-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.badge-change {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-positive {
+  background-color: var(--emerald-100);
+  color: var(--emerald-800);
+}
+
+.badge-negative {
+  background-color: var(--red-100);
+  color: var(--red-800);
+}
+
+.badge-outline {
+  border: 1px solid var(--slate-300);
+  background-color: transparent;
+  color: var(--slate-600);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--slate-200);
+  background-color: var(--slate-50);
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: var(--slate-600);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--slate-300);
+  background-color: white;
+  color: var(--slate-700);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  line-height: 1;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background-color: var(--primary-emerald);
+  color: white;
+  border-color: var(--primary-emerald);
+}
+
+.pagination-btn.current {
+  background-color: var(--primary-emerald);
+  color: white;
+  border-color: var(--primary-emerald);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background-color: var(--primary-emerald-light);
+  transform: translateY(-0.125rem);
+}
+
+/* Footer */
+.site-footer {
+  background-color: var(--slate-900);
+  color: var(--slate-300);
+  border-top: 1px solid var(--slate-700);
+}
+
+.footer-content {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: white;
+}
+
+.footer-brand-icon {
+  background-color: var(--primary-emerald);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.footer-brand-text h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.footer-brand-text p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.footer-description {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.footer-contact {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.footer-contact-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.footer-section h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--slate-300);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--emerald-400);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--slate-700);
+  margin-top: 2rem;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copyright {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+}
+
+.footer-status {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+}
+
+.status-live {
+  color: var(--emerald-400);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--slate-700);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--slate-300);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-emerald);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--primary-emerald-light);
+  color: white;
+  transform: translateY(-0.0625rem);
+}
+
+.btn-secondary {
+  background-color: var(--slate-600);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: var(--slate-700);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-300);
+}
+
+.btn-outline:hover {
+  background-color: var(--slate-100);
+  color: var(--slate-700);
+}
+
+/* Loading States */
+.loading {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--slate-200);
+  border-top: 2px solid var(--primary-emerald);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar-container {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  
+  .sidebar-container.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .main-content-area {
+    margin-left: 0;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 1.875rem;
+  }
+  
+  .header-left {
+    gap: 1rem;
+  }
+  
+  .search-container {
+    max-width: 20rem;
+  }
+  
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem 0.5rem;
+  }
+  
+  .hero {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+  
+  .table-header {
+    padding: 1rem;
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary-emerald);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .sidebar-container,
+  .back-to-top,
+  .header-actions,
+  .refresh-btn,
+  .pagination {
+    display: none !important;
+  }
+  
+  .main-content-area {
+    margin-left: 0 !important;
+  }
+  
+  .site-header {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Dark theme support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--slate-800);
+    border-color: var(--slate-700);
+    color: var(--slate-200);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+    
+    /* Additional test styles */
+    .test-mode {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: #ff6b6b;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        z-index: 9999;
+    }
+    
+    /* Form testing styles */
+    .form-success {
+        background: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .form-error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+        border: 1px solid #f5c6cb;
+    }
+    </style>
+</head>
+<body class="no-sidebar">
+    <div class="test-mode">TEST MODE</div>
+    
+    <div class="app-container">
+        <div class="main-content-area">
+            <header class="site-header">
+                <div class="header-content">
+                    <div class="header-main">
+                        <div class="header-left">
+                            <a href="/" class="logo">
+                                <div class="logo-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                </div>
+                                <div class="logo-text">
+                                    <h1>StockScan Pro</h1>
+                                    <p>Professional Stock Analysis</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="header-actions">
+                            <div class="market-status">
+                                <div class="market-label">S&P 500</div>
+                                <div class="market-value">
+                                    <span style="color: var(--emerald-400); font-weight: 500; font-size: 0.875rem;">+0.52%</span>
+                                    <span class="live-badge">LIVE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="full-nav">
+                        <ul class="nav-list">
+                            <li class="nav-item"><a href="/dashboard">Dashboard</a></li>
+                            <li class="nav-item"><a href="/market-overview">Markets</a></li>
+                            <li class="nav-item"><a href="/stock-scanner">Scanner</a></li>
+                            <li class="nav-item"><a href="/watchlist">Watchlist</a></li>
+                            <li class="nav-item"><a href="/news">News</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+            
+            <main class="main-content">
+                <div class="page-content">
+                    <?php
+/**
+ * Template Name: Contact Us
+ */
+
+get_header();
+?>
+
+<!-- Contact Hero -->
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Contact Us</h1>
+            <p>Get in touch with our team for support, questions, or feedback</p>
+        </div>
+        <div class="hero-stats">
+            <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 0.75rem;">
+                <div class="stat-value" style="font-size: 1.5rem;">< 2hrs</div>
+                <div class="stat-label">Response Time</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Methods -->
+<div class="grid grid-3">
+    <div class="contact-method-card">
+        <div class="contact-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+        </div>
+        <h3>Email Support</h3>
+        <p>Get comprehensive help via email with detailed responses from our support team.</p>
+        <div class="contact-details">
+            <p><strong>General Support:</strong> support@stockscanpro.com</p>
+            <p><strong>Technical Issues:</strong> tech@stockscanpro.com</p>
+            <p><strong>Billing:</strong> billing@stockscanpro.com</p>
+            <p><strong>Response Time:</strong> Within 2 hours</p>
+        </div>
+    </div>
+    
+    <div class="contact-method-card">
+        <div class="contact-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+        </div>
+        <h3>Phone Support</h3>
+        <p>Speak directly with our support specialists for immediate assistance.</p>
+        <div class="contact-details">
+            <p><strong>US/Canada:</strong> +1 (555) 123-4567</p>
+            <p><strong>UK:</strong> +44 20 7123 4567</p>
+            <p><strong>Emergency:</strong> +1 (555) 911-HELP</p>
+            <p><strong>Hours:</strong> Mon-Fri 6AM-8PM EST</p>
+        </div>
+    </div>
+    
+    <div class="contact-method-card">
+        <div class="contact-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+        </div>
+        <h3>Live Chat</h3>
+        <p>Get instant help from our support team with real-time chat support.</p>
+        <div class="contact-details">
+            <p><strong>Availability:</strong> 24/7</p>
+            <p><strong>Response:</strong> Under 5 minutes</p>
+            <p><strong>Languages:</strong> English, Spanish, French</p>
+            <button class="btn btn-outline" onclick="openLiveChat()">Start Chat</button>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Form -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Send us a Message</h3>
+        <p class="card-description">Fill out the form below and we'll get back to you within 2 hours</p>
+    </div>
+    
+    <form id="contact-form" class="contact-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="contact-name" class="form-label">Name *</label>
+                <input type="text" id="contact-name" name="name" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-email" class="form-label">Email *</label>
+                <input type="email" id="contact-email" name="email" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-phone" class="form-label">Phone (Optional)</label>
+                <input type="tel" id="contact-phone" name="phone" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-company" class="form-label">Company (Optional)</label>
+                <input type="text" id="contact-company" name="company" class="form-input">
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="contact-subject" class="form-label">Subject *</label>
+                <select id="contact-subject" name="subject" class="form-select" required>
+                    <option value="">Select a subject</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="technical">Technical Support</option>
+                    <option value="billing">Billing Question</option>
+                    <option value="feature-request">Feature Request</option>
+                    <option value="bug-report">Bug Report</option>
+                    <option value="partnership">Partnership Opportunity</option>
+                    <option value="media">Media Inquiry</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="contact-priority" class="form-label">Priority Level</label>
+                <select id="contact-priority" name="priority" class="form-select">
+                    <option value="low">Low - General question</option>
+                    <option value="medium" selected>Medium - Standard support</option>
+                    <option value="high">High - Urgent issue</option>
+                    <option value="critical">Critical - System down</option>
+                </select>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="contact-message" class="form-label">Message *</label>
+                <textarea id="contact-message" name="message" class="form-textarea" rows="6" placeholder="Please provide as much detail as possible about your inquiry..." required></textarea>
+            </div>
+            
+            <div class="form-group full-width">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="contact-updates" name="updates">
+                    <label for="contact-updates">I'd like to receive updates about new features and products</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Send Message
+            </button>
+            <p class="form-note">We'll respond within 2 hours during business hours.</p>
+        </div>
+    </form>
+</div>
+
+<!-- Office Locations -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Our Locations</h3>
+        <p class="card-description">Visit us at one of our global offices</p>
+    </div>
+    
+    <div class="grid grid-3">
+        <div class="office-card">
+            <h4>New York Headquarters</h4>
+            <div class="office-details">
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>123 Financial District<br>New York, NY 10005</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>+1 (555) 123-4567</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    <span>Mon-Fri: 8AM-6PM EST<br>Sat: 9AM-2PM EST</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="office-card">
+            <h4>London Office</h4>
+            <div class="office-details">
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>456 Canary Wharf<br>London E14 5AB, UK</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>+44 20 7123 4567</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    <span>Mon-Fri: 9AM-5PM GMT<br>Sat: Closed</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="office-card">
+            <h4>Tokyo Office</h4>
+            <div class="office-details">
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>789 Shibuya District<br>Tokyo 150-0002, Japan</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>+81 3-1234-5678</span>
+                </div>
+                <div class="office-detail">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    <span>Mon-Fri: 9AM-6PM JST<br>Sat: 10AM-3PM JST</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Social Media & Additional Resources -->
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Follow Us</h3>
+            <p class="card-description">Stay connected on social media</p>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link twitter">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5 0-.28-.03-.56-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                </svg>
+                <span>Twitter</span>
+                <small>@StockScanPro</small>
+            </a>
+            
+            <a href="#" class="social-link linkedin">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                    <rect x="2" y="9" width="4" height="12"/>
+                    <circle cx="4" cy="4" r="2"/>
+                </svg>
+                <span>LinkedIn</span>
+                <small>StockScan Pro</small>
+            </a>
+            
+            <a href="#" class="social-link youtube">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+                    <polygon points="9.75,15.02 15.5,11.75 9.75,8.48"/>
+                </svg>
+                <span>YouTube</span>
+                <small>StockScan Tutorials</small>
+            </a>
+            
+            <a href="#" class="social-link github">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                </svg>
+                <span>GitHub</span>
+                <small>Open Source</small>
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Additional Resources</h3>
+            <p class="card-description">Other ways to get help</p>
+        </div>
+        
+        <div class="resource-links">
+            <a href="/help-center" class="resource-link">
+                <div class="resource-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>Help Center</h4>
+                    <p>Browse our comprehensive knowledge base</p>
+                </div>
+            </a>
+            
+            <a href="/faq" class="resource-link">
+                <div class="resource-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>FAQ</h4>
+                    <p>Find answers to common questions</p>
+                </div>
+            </a>
+            
+            <a href="/status" class="resource-link">
+                <div class="resource-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
+                        <circle cx="12" cy="16" r="1"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>System Status</h4>
+                    <p>Check current service status and uptime</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link" onclick="openUserForum()">
+                <div class="resource-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>Community Forum</h4>
+                    <p>Connect with other users and share tips</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Response Time Guarantee -->
+<div class="card" style="background: var(--emerald-50); border: 2px solid var(--primary-emerald);">
+    <div class="card-header">
+        <h3 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            Our Response Time Guarantee
+        </h3>
+        <p class="card-description">We're committed to providing fast, helpful support</p>
+    </div>
+    
+    <div class="response-times">
+        <div class="response-item">
+            <div class="response-type">Critical Issues</div>
+            <div class="response-time">< 1 Hour</div>
+            <div class="response-description">System outages, security issues</div>
+        </div>
+        
+        <div class="response-item">
+            <div class="response-type">High Priority</div>
+            <div class="response-time">< 2 Hours</div>
+            <div class="response-description">Billing problems, account access</div>
+        </div>
+        
+        <div class="response-item">
+            <div class="response-type">Standard Support</div>
+            <div class="response-time">< 4 Hours</div>
+            <div class="response-description">General questions, how-to inquiries</div>
+        </div>
+        
+        <div class="response-item">
+            <div class="response-type">Feature Requests</div>
+            <div class="response-time">< 24 Hours</div>
+            <div class="response-description">Enhancement suggestions, feedback</div>
+        </div>
+    </div>
+</div>
+
+<style>
+.contact-method-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--slate-200);
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.contact-method-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.contact-icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--primary-emerald);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.contact-method-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin-bottom: 0.75rem;
+}
+
+.contact-method-card > p {
+    color: var(--slate-600);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.contact-details p {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--slate-700);
+}
+
+.contact-form {
+    max-width: none;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin: 0;
+    margin-top: 0.25rem;
+}
+
+.checkbox-group label {
+    font-size: 0.875rem;
+    color: var(--slate-600);
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.form-note {
+    font-size: 0.875rem;
+    color: var(--slate-600);
+    margin: 0;
+}
+
+.office-card {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.office-card h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin-bottom: 1rem;
+}
+
+.office-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.office-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--slate-700);
+}
+
+.office-detail svg {
+    color: var(--primary-emerald);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--slate-700);
+    transition: all 0.2s;
+}
+
+.social-link:hover {
+    background: var(--primary-emerald);
+    color: white;
+    border-color: var(--primary-emerald);
+    transform: translateX(4px);
+}
+
+.social-link svg {
+    color: inherit;
+}
+
+.social-link span {
+    font-weight: 500;
+    flex: 1;
+}
+
+.social-link small {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.resource-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.resource-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--slate-700);
+    transition: all 0.2s;
+}
+
+.resource-link:hover {
+    background: var(--emerald-50);
+    border-color: var(--primary-emerald);
+    transform: translateY(-1px);
+}
+
+.resource-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--primary-emerald);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.resource-link h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 0.25rem 0;
+}
+
+.resource-link p {
+    font-size: 0.875rem;
+    color: var(--slate-600);
+    margin: 0;
+}
+
+.response-times {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.response-item {
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid var(--emerald-200);
+}
+
+.response-type {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--emerald-800);
+    margin-bottom: 0.5rem;
+}
+
+.response-time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--emerald-600);
+    margin-bottom: 0.5rem;
+}
+
+.response-description {
+    font-size: 0.75rem;
+    color: var(--slate-600);
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .response-times {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = `
+                <div class="loading" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></div>
+                Sending...
+            `;
+            submitBtn.disabled = true;
+            
+            // Prepare data for AJAX request
+            const ajaxData = new FormData();
+            ajaxData.append('action', 'submit_contact_form');
+            ajaxData.append('nonce', 'test_nonce_123');
+            
+            // Add all form data
+            for (let [key, value] of formData.entries()) {
+                ajaxData.append(key, value);
+            }
+            
+            // Send AJAX request
+            fetch('/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: ajaxData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showContactNotification('Message sent successfully! We\'ll get back to you within 2 hours.', 'success');
+                    
+                    // Reset form
+                    this.reset();
+                } else {
+                    showContactNotification('Failed to send message. Please try again or contact us directly.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showContactNotification('Failed to send message. Please try again or contact us directly.', 'error');
+            })
+            .finally(() => {
+                // Reset button
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+});
+
+function showContactNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 300px;
+        background: ${type === 'success' ? 'var(--primary-emerald)' : 'var(--red-600)'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        font-weight: 500;
+        line-height: 1.4;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+function openLiveChat() {
+    // In a real implementation, this would open your live chat widget
+    // For now, we'll show a placeholder message
+    showContactNotification('Live chat feature will be implemented soon. Please use email or phone for now.', 'info');
+}
+
+function openUserForum() {
+    // In a real implementation, this would redirect to your community forum
+    showContactNotification('Community forum coming soon! Stay tuned for updates.', 'info');
+}
+</script>
+
+
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-brand">
+                        <div class="footer-brand-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                        </div>
+                        <div class="footer-brand-text">
+                            <h3>StockScan Pro</h3>
+                            <p>Professional Stock Analysis</p>
+                        </div>
+                    </a>
+                    <p class="footer-description">
+                        Advanced stock scanning and market analysis tools for professional traders and investors.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/stock-scanner">Stock Scanner</a></li>
+                        <li><a href="/market-overview">Market Overview</a></li>
+                        <li><a href="/watchlist">Watchlist</a></li>
+                        <li><a href="/news">Market News</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/security">Security</a></li>
+                        <li><a href="/accessibility">Accessibility</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    © 2024 StockScan Pro. All rights reserved. Market data provided by third-party sources.
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+    // Test mode JavaScript for form handling
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Testing contact page');
+        
+        // Mock AJAX form submissions for testing
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted:', form.id || 'unnamed form');
+                
+                // Show success message
+                const successDiv = document.createElement('div');
+                successDiv.className = 'form-success';
+                successDiv.textContent = 'Form submitted successfully (TEST MODE)';
+                form.insertBefore(successDiv, form.firstChild);
+                
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    successDiv.remove();
+                }, 3000);
+            });
+        });
+        
+        // Test accessibility controls
+        const accessibilityControls = document.querySelectorAll('.accessibility-control');
+        accessibilityControls.forEach(control => {
+            control.addEventListener('click', function() {
+                console.log('Accessibility control clicked:', this.textContent);
+            });
+        });
+        
+        // Test payment buttons
+        const paymentButtons = document.querySelectorAll('#paypal-button-container button, .btn');
+        paymentButtons.forEach(button => {
+            if (button.type !== 'submit') {
+                button.addEventListener('click', function(e) {
+                    if (this.textContent.includes('PayPal') || this.textContent.includes('Payment')) {
+                        e.preventDefault();
+                        console.log('Payment button clicked:', this.textContent);
+                        alert('Payment functionality would work in live environment');
+                    }
+                });
+            }
+        });
+    });
+    </script>
+</body>
+</html>

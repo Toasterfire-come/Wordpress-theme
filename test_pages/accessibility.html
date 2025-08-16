@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>accessibility - StockScan Pro</title>
+    <style>
+    /*
+Theme Name: Stock Scanner Pro - React Conversion
+Description: Complete WordPress theme converted from React Stock Scanner application with all features including Dashboard, Stock Scanner, Market Overview, Watchlist, Portfolio, News, and all supporting pages.
+Version: 1.0.0
+Author: Stock Scanner Team
+*/
+
+/* CSS Variables - Professional Finance Theme (matching React app) */
+:root {
+  --primary-emerald: #059669;
+  --primary-emerald-light: #10b981;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --red-600: #dc2626;
+  --red-100: #fee2e2;
+  --red-800: #991b1b;
+  --emerald-100: #dcfce7;
+  --emerald-400: #34d399;
+  --emerald-600: #059669;
+  --emerald-800: #065f46;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: var(--slate-800);
+  background-color: var(--slate-50);
+}
+
+/* Layout Structure */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--slate-50);
+}
+
+.sidebar-container {
+  width: 256px;
+  background-color: var(--slate-900);
+  color: white;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.sidebar-collapsed {
+  width: 64px;
+}
+
+.main-content-area {
+  flex: 1;
+  margin-left: 256px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content-area.sidebar-collapsed {
+  margin-left: 64px;
+}
+
+.no-sidebar .main-content-area {
+  margin-left: 0;
+}
+
+/* Header Styles */
+.site-header {
+  background-color: var(--slate-900);
+  color: white;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--slate-700);
+}
+
+.header-content {
+  padding: 1rem 1.5rem;
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: white;
+}
+
+.logo-icon {
+  background-color: var(--primary-emerald);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.logo-text p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 24rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  background-color: var(--slate-800);
+  border: 1px solid var(--slate-600);
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 0.875rem;
+}
+
+.search-input::placeholder {
+  color: var(--slate-400);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-emerald);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--slate-400);
+  width: 1rem;
+  height: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.market-status {
+  text-align: right;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .market-status {
+    display: block;
+  }
+}
+
+.market-label {
+  font-size: 0.875rem;
+  color: var(--slate-300);
+}
+
+.market-value {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.header-btn {
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.header-btn:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background-color: var(--red-600);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  border-radius: 9999px;
+  min-width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.live-badge {
+  background-color: var(--primary-emerald);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  margin-left: 0.25rem;
+}
+
+/* Full Navigation */
+.full-nav {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--slate-700);
+}
+
+.nav-list {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--slate-300);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-item a:hover,
+.nav-item a.current {
+  background-color: var(--primary-emerald);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Sidebar Styles */
+.sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--slate-700);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-info h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.brand-info p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  padding: 0.25rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.sidebar-nav {
+  padding: 1rem;
+  flex: 1;
+}
+
+.nav-section {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--slate-300);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.section-title:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.nav-links {
+  margin-top: 0.25rem;
+}
+
+.nav-links.collapsed {
+  display: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  color: var(--slate-300);
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
+}
+
+.nav-link:hover {
+  background-color: var(--slate-700);
+  color: white;
+}
+
+.nav-link.active {
+  background-color: var(--primary-emerald);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.sidebar-collapsed .nav-link {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.sidebar-collapsed .nav-link span:not(.nav-icon) {
+  display: none;
+}
+
+.sidebar-collapsed .section-title {
+  display: none;
+}
+
+.sidebar-collapsed .brand-info {
+  display: none;
+}
+
+/* Upgrade Card */
+.upgrade-card {
+  margin: 1rem;
+  padding: 0.75rem;
+  background-color: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.sidebar-collapsed .upgrade-card {
+  display: none;
+}
+
+.upgrade-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--emerald-400);
+  margin: 0 auto 0.5rem;
+}
+
+.upgrade-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.upgrade-subtitle {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin-bottom: 0.75rem;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.upgrade-btn:hover {
+  background-color: var(--primary-emerald-light);
+  color: white;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--slate-800);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-description {
+  color: var(--slate-500);
+  font-size: 0.875rem;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 100%);
+  color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .hero-text h1 {
+    font-size: 2.5rem;
+  }
+}
+
+.hero-text p {
+  font-size: 1.125rem;
+  color: var(--slate-300);
+  margin: 0;
+}
+
+.hero-stats {
+  text-align: right;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--emerald-400);
+}
+
+.stat-change {
+  font-size: 0.875rem;
+  color: var(--emerald-400);
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-1 { grid-template-columns: 1fr; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+/* Metric Cards */
+.metric-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--slate-600);
+}
+
+.metric-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--slate-400);
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-bottom: 0.25rem;
+}
+
+.metric-change {
+  font-size: 0.75rem;
+  color: var(--emerald-600);
+}
+
+.metric-change.negative {
+  color: var(--red-600);
+}
+
+/* Tables */
+.table-container {
+  background: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 1.5rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--slate-200);
+  background-color: var(--slate-50);
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--slate-800);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-300);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background-color: var(--slate-100);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.table th {
+  background-color: var(--slate-50);
+  font-weight: 600;
+  color: var(--slate-700);
+  font-size: 0.875rem;
+}
+
+.table tbody tr:hover {
+  background-color: var(--slate-50);
+}
+
+.table-cell-right {
+  text-align: right;
+}
+
+.table-cell-center {
+  text-align: center;
+}
+
+/* Stock-specific styling */
+.symbol {
+  font-weight: 600;
+  color: var(--slate-900);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.symbol-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.symbol-icon.positive {
+  color: var(--emerald-600);
+}
+
+.symbol-icon.negative {
+  color: var(--red-600);
+}
+
+.company-name {
+  color: var(--slate-600);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.change {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+.change.positive {
+  color: var(--emerald-600);
+}
+
+.change.negative {
+  color: var(--red-600);
+}
+
+.change-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.badge-change {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-positive {
+  background-color: var(--emerald-100);
+  color: var(--emerald-800);
+}
+
+.badge-negative {
+  background-color: var(--red-100);
+  color: var(--red-800);
+}
+
+.badge-outline {
+  border: 1px solid var(--slate-300);
+  background-color: transparent;
+  color: var(--slate-600);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--slate-200);
+  background-color: var(--slate-50);
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: var(--slate-600);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--slate-300);
+  background-color: white;
+  color: var(--slate-700);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  line-height: 1;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background-color: var(--primary-emerald);
+  color: white;
+  border-color: var(--primary-emerald);
+}
+
+.pagination-btn.current {
+  background-color: var(--primary-emerald);
+  color: white;
+  border-color: var(--primary-emerald);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background-color: var(--primary-emerald-light);
+  transform: translateY(-0.125rem);
+}
+
+/* Footer */
+.site-footer {
+  background-color: var(--slate-900);
+  color: var(--slate-300);
+  border-top: 1px solid var(--slate-700);
+}
+
+.footer-content {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: white;
+}
+
+.footer-brand-icon {
+  background-color: var(--primary-emerald);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.footer-brand-text h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.footer-brand-text p {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  margin: 0;
+}
+
+.footer-description {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.footer-contact {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.footer-contact-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.footer-section h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--slate-300);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--emerald-400);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--slate-700);
+  margin-top: 2rem;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copyright {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+}
+
+.footer-status {
+  font-size: 0.875rem;
+  color: var(--slate-400);
+}
+
+.status-live {
+  color: var(--emerald-400);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--slate-700);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--slate-300);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-emerald);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-emerald);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--primary-emerald-light);
+  color: white;
+  transform: translateY(-0.0625rem);
+}
+
+.btn-secondary {
+  background-color: var(--slate-600);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: var(--slate-700);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-300);
+}
+
+.btn-outline:hover {
+  background-color: var(--slate-100);
+  color: var(--slate-700);
+}
+
+/* Loading States */
+.loading {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--slate-200);
+  border-top: 2px solid var(--primary-emerald);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar-container {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  
+  .sidebar-container.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .main-content-area {
+    margin-left: 0;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 1.875rem;
+  }
+  
+  .header-left {
+    gap: 1rem;
+  }
+  
+  .search-container {
+    max-width: 20rem;
+  }
+  
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem 0.5rem;
+  }
+  
+  .hero {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+  
+  .table-header {
+    padding: 1rem;
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary-emerald);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .sidebar-container,
+  .back-to-top,
+  .header-actions,
+  .refresh-btn,
+  .pagination {
+    display: none !important;
+  }
+  
+  .main-content-area {
+    margin-left: 0 !important;
+  }
+  
+  .site-header {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Dark theme support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--slate-800);
+    border-color: var(--slate-700);
+    color: var(--slate-200);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+    
+    /* Additional test styles */
+    .test-mode {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: #ff6b6b;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        z-index: 9999;
+    }
+    
+    /* Form testing styles */
+    .form-success {
+        background: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .form-error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+        border: 1px solid #f5c6cb;
+    }
+    </style>
+</head>
+<body class="no-sidebar">
+    <div class="test-mode">TEST MODE</div>
+    
+    <div class="app-container">
+        <div class="main-content-area">
+            <header class="site-header">
+                <div class="header-content">
+                    <div class="header-main">
+                        <div class="header-left">
+                            <a href="/" class="logo">
+                                <div class="logo-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                </div>
+                                <div class="logo-text">
+                                    <h1>StockScan Pro</h1>
+                                    <p>Professional Stock Analysis</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="header-actions">
+                            <div class="market-status">
+                                <div class="market-label">S&P 500</div>
+                                <div class="market-value">
+                                    <span style="color: var(--emerald-400); font-weight: 500; font-size: 0.875rem;">+0.52%</span>
+                                    <span class="live-badge">LIVE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="full-nav">
+                        <ul class="nav-list">
+                            <li class="nav-item"><a href="/dashboard">Dashboard</a></li>
+                            <li class="nav-item"><a href="/market-overview">Markets</a></li>
+                            <li class="nav-item"><a href="/stock-scanner">Scanner</a></li>
+                            <li class="nav-item"><a href="/watchlist">Watchlist</a></li>
+                            <li class="nav-item"><a href="/news">News</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+            
+            <main class="main-content">
+                <div class="page-content">
+                    <?php
+/**
+ * Template Name: Accessibility
+ */
+
+get_header();
+?>
+
+<!-- Accessibility Hero -->
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Accessibility</h1>
+            <p>Our commitment to making StockScan Pro accessible to everyone</p>
+        </div>
+        <div class="hero-stats">
+            <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 0.75rem;">
+                <div class="stat-value" style="font-size: 1.5rem;">WCAG 2.1</div>
+                <div class="stat-label">AA Compliant</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accessibility Overview -->
+<div class="card" style="background: var(--emerald-50); border: 2px solid var(--primary-emerald);">
+    <div class="card-header">
+        <h3 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Accessibility Statement
+        </h3>
+        <p class="card-description">Making financial analysis accessible to all users</p>
+    </div>
+    
+    <div class="grid grid-3">
+        <div style="text-align: center; padding: 1rem;">
+            <div style="width: 3rem; height: 3rem; background: var(--primary-emerald); border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; color: white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--slate-800);">Screen Reader Compatible</h4>
+            <p style="font-size: 0.875rem; color: var(--slate-600);">Full compatibility with assistive technologies</p>
+        </div>
+        
+        <div style="text-align: center; padding: 1rem;">
+            <div style="width: 3rem; height: 3rem; background: var(--primary-emerald); border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; color: white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--slate-800);">Keyboard Navigation</h4>
+            <p style="font-size: 0.875rem; color: var(--slate-600);">Complete keyboard accessibility for all functions</p>
+        </div>
+        
+        <div style="text-align: center; padding: 1rem;">
+            <div style="width: 3rem; height: 3rem; background: var(--primary-emerald); border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; color: white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="1"/>
+                    <circle cx="19" cy="12" r="1"/>
+                    <circle cx="5" cy="12" r="1"/>
+                </svg>
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--slate-800);">High Contrast</h4>
+            <p style="font-size: 0.875rem; color: var(--slate-600);">Optimized color contrast for visual accessibility</p>
+        </div>
+    </div>
+</div>
+
+<!-- Accessibility Content -->
+<div class="card accessibility-content">
+    
+    <section id="commitment" class="accessibility-section">
+        <h2 class="section-title">Our Commitment to Accessibility</h2>
+        
+        <p>StockScan Pro is committed to ensuring digital accessibility for people with disabilities. We continually improve the user experience for everyone by applying relevant accessibility standards and guidelines.</p>
+        
+        <h3>Accessibility Standards</h3>
+        <p>Our platform aims to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities, and more user-friendly for everyone.</p>
+        
+        <h3>Ongoing Efforts</h3>
+        <ul class="accessibility-list">
+            <li>Regular accessibility audits by third-party experts</li>
+            <li>Continuous testing with assistive technologies</li>
+            <li>User feedback integration from the disability community</li>
+            <li>Staff training on accessibility best practices</li>
+            <li>Accessibility-first approach in new feature development</li>
+        </ul>
+    </section>
+
+    <section id="features" class="accessibility-section">
+        <h2 class="section-title">Accessibility Features</h2>
+        
+        <div class="features-grid">
+            <div class="feature-category">
+                <h3>Visual Accessibility</h3>
+                <ul class="feature-list">
+                    <li><strong>High Contrast Mode:</strong> Enhanced color contrast ratios exceeding WCAG AA standards</li>
+                    <li><strong>Font Size Controls:</strong> Adjustable text size from 100% to 200%</li>
+                    <li><strong>Color Alternatives:</strong> Information conveyed through shape and text, not just color</li>
+                    <li><strong>Focus Indicators:</strong> Clear visual focus indicators for keyboard navigation</li>
+                    <li><strong>Zoom Support:</strong> Full functionality maintained at up to 400% zoom</li>
+                </ul>
+            </div>
+            
+            <div class="feature-category">
+                <h3>Motor Accessibility</h3>
+                <ul class="feature-list">
+                    <li><strong>Keyboard Navigation:</strong> Full site functionality accessible via keyboard only</li>
+                    <li><strong>Large Click Targets:</strong> Minimum 44x44 pixel touch targets</li>
+                    <li><strong>Timeout Extensions:</strong> Ability to extend or disable session timeouts</li>
+                    <li><strong>Drag & Drop Alternatives:</strong> Alternative methods for drag-and-drop actions</li>
+                    <li><strong>Voice Control Support:</strong> Compatible with voice navigation software</li>
+                </ul>
+            </div>
+            
+            <div class="feature-category">
+                <h3>Cognitive Accessibility</h3>
+                <ul class="feature-list">
+                    <li><strong>Clear Navigation:</strong> Consistent and predictable navigation structure</li>
+                    <li><strong>Error Prevention:</strong> Clear form validation and error messages</li>
+                    <li><strong>Help Context:</strong> Contextual help and instructions throughout</li>
+                    <li><strong>Simple Language:</strong> Plain language used for important information</li>
+                    <li><strong>Progress Indicators:</strong> Clear feedback for multi-step processes</li>
+                </ul>
+            </div>
+            
+            <div class="feature-category">
+                <h3>Hearing Accessibility</h3>
+                <ul class="feature-list">
+                    <li><strong>Visual Alerts:</strong> Visual alternatives to audio notifications</li>
+                    <li><strong>Captions:</strong> Closed captions for all video content</li>
+                    <li><strong>Transcripts:</strong> Text transcripts for audio content</li>
+                    <li><strong>Sign Language:</strong> Sign language interpretation for key videos</li>
+                    <li><strong>Text-Based Communication:</strong> Chat and email support options</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="assistive-technology" class="accessibility-section">
+        <h2 class="section-title">Assistive Technology Compatibility</h2>
+        
+        <p>StockScan Pro is designed to work seamlessly with a wide range of assistive technologies:</p>
+        
+        <div class="compatibility-grid">
+            <div class="compatibility-item">
+                <h4>Screen Readers</h4>
+                <ul>
+                    <li>JAWS (Windows)</li>
+                    <li>NVDA (Windows)</li>
+                    <li>VoiceOver (macOS/iOS)</li>
+                    <li>TalkBack (Android)</li>
+                    <li>Dragon NaturallySpeaking</li>
+                </ul>
+            </div>
+            
+            <div class="compatibility-item">
+                <h4>Browser Support</h4>
+                <ul>
+                    <li>Chrome (Windows, macOS, Linux)</li>
+                    <li>Firefox (Windows, macOS, Linux)</li>
+                    <li>Safari (macOS, iOS)</li>
+                    <li>Edge (Windows)</li>
+                    <li>Opera (Windows, macOS, Linux)</li>
+                </ul>
+            </div>
+            
+            <div class="compatibility-item">
+                <h4>Navigation Tools</h4>
+                <ul>
+                    <li>Switch navigation devices</li>
+                    <li>Head pointer systems</li>
+                    <li>Eye-tracking software</li>
+                    <li>Voice control software</li>
+                    <li>Specialized keyboards</li>
+                </ul>
+            </div>
+            
+            <div class="compatibility-item">
+                <h4>Mobile Accessibility</h4>
+                <ul>
+                    <li>iOS VoiceOver</li>
+                    <li>Android TalkBack</li>
+                    <li>Switch Control (iOS)</li>
+                    <li>Select to Speak (Android)</li>
+                    <li>Voice Access (Android)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="keyboard-shortcuts" class="accessibility-section">
+        <h2 class="section-title">Keyboard Shortcuts</h2>
+        
+        <p>Navigate StockScan Pro efficiently using these keyboard shortcuts:</p>
+        
+        <div class="shortcuts-grid">
+            <div class="shortcut-category">
+                <h4>General Navigation</h4>
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Tab</span>
+                        <span class="shortcut-description">Move to next focusable element</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Shift + Tab</span>
+                        <span class="shortcut-description">Move to previous focusable element</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Enter / Space</span>
+                        <span class="shortcut-description">Activate buttons and links</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Esc</span>
+                        <span class="shortcut-description">Close dialogs and menus</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="shortcut-category">
+                <h4>Page Navigation</h4>
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Alt + 1</span>
+                        <span class="shortcut-description">Go to Dashboard</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Alt + 2</span>
+                        <span class="shortcut-description">Go to Market Overview</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Alt + 3</span>
+                        <span class="shortcut-description">Go to Stock Scanner</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Alt + 4</span>
+                        <span class="shortcut-description">Go to Watchlist</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="shortcut-category">
+                <h4>Search & Actions</h4>
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Ctrl + /</span>
+                        <span class="shortcut-description">Focus search box</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Ctrl + R</span>
+                        <span class="shortcut-description">Refresh data</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Ctrl + H</span>
+                        <span class="shortcut-description">Open help</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-keys">Ctrl + Alt + M</span>
+                        <span class="shortcut-description">Open main menu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testing" class="accessibility-section">
+        <h2 class="section-title">Accessibility Testing</h2>
+        
+        <h3>Our Testing Process</h3>
+        <p>We employ a comprehensive testing strategy to ensure accessibility:</p>
+        
+        <ul class="accessibility-list">
+            <li><strong>Automated Testing:</strong> Regular scans using tools like axe-core, WAVE, and Lighthouse</li>
+            <li><strong>Manual Testing:</strong> Expert review using keyboard navigation and assistive technologies</li>
+            <li><strong>User Testing:</strong> Real-world testing with users who have disabilities</li>
+            <li><strong>Code Reviews:</strong> Accessibility-focused code reviews for all new features</li>
+            <li><strong>Third-Party Audits:</strong> Annual comprehensive audits by accessibility experts</li>
+        </ul>
+        
+        <h3>Testing Tools We Use</h3>
+        <div class="tools-grid">
+            <div class="tool-item">
+                <h4>Automated Tools</h4>
+                <ul>
+                    <li>axe DevTools</li>
+                    <li>WAVE Web Accessibility Evaluator</li>
+                    <li>Google Lighthouse</li>
+                    <li>Pa11y command line tool</li>
+                    <li>Colour Contrast Analyser</li>
+                </ul>
+            </div>
+            
+            <div class="tool-item">
+                <h4>Manual Testing</h4>
+                <ul>
+                    <li>Screen reader testing (NVDA, JAWS, VoiceOver)</li>
+                    <li>Keyboard-only navigation</li>
+                    <li>Voice control testing</li>
+                    <li>Zoom and magnification testing</li>
+                    <li>Color blindness simulation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="feedback" class="accessibility-section">
+        <h2 class="section-title">Feedback & Support</h2>
+        
+        <p>We want to hear from you! Your feedback helps us improve accessibility for everyone.</p>
+        
+        <div class="feedback-options">
+            <div class="feedback-option">
+                <h4>Report Accessibility Issues</h4>
+                <p>If you encounter any accessibility barriers, please let us know:</p>
+                <ul class="contact-methods">
+                    <li><strong>Email:</strong> accessibility@stockscanpro.com</li>
+                    <li><strong>Phone:</strong> +1 (555) 123-ACCESS</li>
+                    <li><strong>Response Time:</strong> Within 24 hours</li>
+                </ul>
+            </div>
+            
+            <div class="feedback-option">
+                <h4>Request Accommodations</h4>
+                <p>Need additional accommodations? We're here to help:</p>
+                <ul class="contact-methods">
+                    <li><strong>Email:</strong> support@stockscanpro.com</li>
+                    <li><strong>Phone:</strong> +1 (555) 123-4567</li>
+                    <li><strong>Live Chat:</strong> Available on our website</li>
+                </ul>
+            </div>
+            
+            <div class="feedback-option">
+                <h4>Alternative Formats</h4>
+                <p>Need information in an alternative format?</p>
+                <ul class="contact-methods">
+                    <li>Large print documents</li>
+                    <li>Audio descriptions</li>
+                    <li>Braille materials</li>
+                    <li>Sign language interpretation</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="feedback-form-container">
+            <h3>Submit Accessibility Feedback</h3>
+            <form id="accessibility-feedback-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="feedback-name" class="form-label">Name (Optional)</label>
+                        <input type="text" id="feedback-name" name="name" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feedback-email" class="form-label">Email</label>
+                        <input type="email" id="feedback-email" name="email" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="feedback-type" class="form-label">Type of Feedback</label>
+                        <select id="feedback-type" name="type" class="form-select" required>
+                            <option value="">Select feedback type</option>
+                            <option value="barrier">Accessibility Barrier</option>
+                            <option value="suggestion">Improvement Suggestion</option>
+                            <option value="compliment">Positive Feedback</option>
+                            <option value="accommodation">Accommodation Request</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="feedback-assistive-tech" class="form-label">Assistive Technology Used (Optional)</label>
+                        <input type="text" id="feedback-assistive-tech" name="assistive_tech" class="form-input" placeholder="e.g., JAWS, NVDA, VoiceOver, etc.">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="feedback-message" class="form-label">Detailed Feedback</label>
+                        <textarea id="feedback-message" name="message" class="form-textarea" rows="5" placeholder="Please provide specific details about your accessibility experience..." required></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Submit Feedback</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="roadmap" class="accessibility-section">
+        <h2 class="section-title">Accessibility Improvement Roadmap</h2>
+        
+        <p>We're continuously working to improve accessibility. Here's what we're planning:</p>
+        
+        <div class="roadmap-timeline">
+            <div class="roadmap-item completed">
+                <div class="roadmap-status">✓ Completed</div>
+                <h4>WCAG 2.1 AA Compliance</h4>
+                <p>Achieved full WCAG 2.1 Level AA compliance across the platform</p>
+                <span class="roadmap-date">Q4 2024</span>
+            </div>
+            
+            <div class="roadmap-item in-progress">
+                <div class="roadmap-status">🔄 In Progress</div>
+                <h4>Enhanced Mobile Accessibility</h4>
+                <p>Improved touch target sizes and voice control support on mobile devices</p>
+                <span class="roadmap-date">Q1 2025</span>
+            </div>
+            
+            <div class="roadmap-item planned">
+                <div class="roadmap-status">📋 Planned</div>
+                <h4>AI-Powered Descriptions</h4>
+                <p>Automatic alt-text generation for charts and financial graphs</p>
+                <span class="roadmap-date">Q2 2025</span>
+            </div>
+            
+            <div class="roadmap-item planned">
+                <div class="roadmap-status">📋 Planned</div>
+                <h4>Personalization Features</h4>
+                <p>User-customizable accessibility preferences and saved settings</p>
+                <span class="roadmap-date">Q3 2025</span>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Accessibility Quick Actions -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Quick Accessibility Actions</h3>
+        <p class="card-description">Adjust your experience right now</p>
+    </div>
+    
+    <div class="accessibility-controls">
+        <button class="accessibility-control" onclick="adjustFontSize(1.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 6V4"/>
+                <path d="M14 2h-4"/>
+                <path d="M12 18v2"/>
+                <path d="M14 22h-4"/>
+                <path d="M6 12H4"/>
+                <path d="M2 14v-4"/>
+                <path d="M18 12h2"/>
+                <path d="M22 14v-4"/>
+            </svg>
+            Increase Font Size
+        </button>
+        
+        <button class="accessibility-control" onclick="toggleHighContrast()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a10 10 0 0 1 0 20V2z"/>
+            </svg>
+            High Contrast Mode
+        </button>
+        
+        <button class="accessibility-control" onclick="reducedMotion()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <circle cx="12" cy="12" r="4"/>
+            </svg>
+            Reduce Motion
+        </button>
+        
+        <button class="accessibility-control" onclick="focusSkipToContent()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+            Skip to Content
+        </button>
+    </div>
+</div>
+
+<style>
+.accessibility-content {
+    max-width: 50rem;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.accessibility-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+.accessibility-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-bottom: 1.5rem;
+    scroll-margin-top: 2rem;
+}
+
+.accessibility-section h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 1.5rem 0 1rem 0;
+}
+
+.accessibility-section p {
+    color: var(--slate-700);
+    margin-bottom: 1rem;
+}
+
+.accessibility-list {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    color: var(--slate-700);
+}
+
+.accessibility-list li {
+    margin-bottom: 0.5rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.feature-category {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary-emerald);
+}
+
+.feature-category h3 {
+    color: var(--slate-800);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.feature-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--slate-700);
+}
+
+.feature-list li {
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.compatibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.compatibility-item {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.compatibility-item h4 {
+    color: var(--slate-800);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.compatibility-item ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--slate-700);
+}
+
+.compatibility-item li {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.shortcut-category {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.shortcut-category h4 {
+    color: var(--slate-800);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.shortcut-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+.shortcut-item:last-child {
+    border-bottom: none;
+}
+
+.shortcut-keys {
+    font-family: monospace;
+    background: var(--slate-800);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    min-width: 5rem;
+    text-align: center;
+}
+
+.shortcut-description {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--slate-600);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.tool-item {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.tool-item h4 {
+    color: var(--slate-800);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.tool-item ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--slate-700);
+}
+
+.tool-item li {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.feedback-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.feedback-option {
+    background: var(--slate-50);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.feedback-option h4 {
+    color: var(--slate-800);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.contact-methods {
+    margin: 0.75rem 0;
+    padding-left: 1.25rem;
+    color: var(--slate-700);
+}
+
+.contact-methods li {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.feedback-form-container {
+    background: var(--emerald-50);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--emerald-200);
+    margin-top: 2rem;
+}
+
+.feedback-form-container h3 {
+    color: var(--emerald-800);
+    margin-bottom: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.roadmap-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.roadmap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-200);
+}
+
+.roadmap-item.completed {
+    background: var(--emerald-50);
+    border-color: var(--emerald-200);
+}
+
+.roadmap-item.in-progress {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+
+.roadmap-item.planned {
+    background: var(--slate-50);
+    border-color: var(--slate-200);
+}
+
+.roadmap-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.roadmap-item.completed .roadmap-status {
+    background: var(--emerald-600);
+    color: white;
+}
+
+.roadmap-item.in-progress .roadmap-status {
+    background: #f59e0b;
+    color: white;
+}
+
+.roadmap-item.planned .roadmap-status {
+    background: var(--slate-600);
+    color: white;
+}
+
+.roadmap-item h4 {
+    color: var(--slate-800);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    flex: 1;
+}
+
+.roadmap-item p {
+    color: var(--slate-600);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.roadmap-date {
+    font-size: 0.75rem;
+    color: var(--slate-500);
+    font-weight: 500;
+}
+
+.accessibility-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.accessibility-control {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: 0.5rem;
+    color: var(--slate-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.accessibility-control:hover {
+    background: var(--primary-emerald);
+    color: white;
+    border-color: var(--primary-emerald);
+    transform: translateY(-1px);
+}
+
+.accessibility-control:focus {
+    outline: 2px solid var(--primary-emerald);
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .features-grid,
+    .compatibility-grid,
+    .shortcuts-grid,
+    .tools-grid,
+    .feedback-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .roadmap-item {
+        flex-direction: column;
+    }
+    
+    .roadmap-status {
+        align-self: flex-start;
+    }
+}
+</style>
+
+<script>
+// Accessibility enhancement functions
+function adjustFontSize(multiplier) {
+    const currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    document.documentElement.style.fontSize = (currentSize * multiplier) + 'px';
+    
+    // Store preference
+    localStorage.setItem('accessibility-font-size', currentSize * multiplier);
+    
+    // Show confirmation
+    showAccessibilityNotification('Font size adjusted');
+}
+
+function toggleHighContrast() {
+    document.body.classList.toggle('high-contrast');
+    
+    // Store preference
+    const isHighContrast = document.body.classList.contains('high-contrast');
+    localStorage.setItem('accessibility-high-contrast', isHighContrast);
+    
+    showAccessibilityNotification(isHighContrast ? 'High contrast enabled' : 'High contrast disabled');
+}
+
+function reducedMotion() {
+    document.body.classList.toggle('reduced-motion');
+    
+    // Store preference
+    const isReducedMotion = document.body.classList.contains('reduced-motion');
+    localStorage.setItem('accessibility-reduced-motion', isReducedMotion);
+    
+    showAccessibilityNotification(isReducedMotion ? 'Motion reduced' : 'Motion restored');
+}
+
+function focusSkipToContent() {
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.focus();
+        mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showAccessibilityNotification(message) {
+    // Create and show accessibility notification
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--primary-emerald);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        font-weight: 500;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+    
+    // Announce to screen readers
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.style.cssText = `
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    `;
+    announcement.textContent = message;
+    document.body.appendChild(announcement);
+    
+    setTimeout(() => {
+        announcement.remove();
+    }, 1000);
+}
+
+// Load saved accessibility preferences
+document.addEventListener('DOMContentLoaded', function() {
+    // Load font size preference
+    const savedFontSize = localStorage.getItem('accessibility-font-size');
+    if (savedFontSize) {
+        document.documentElement.style.fontSize = savedFontSize + 'px';
+    }
+    
+    // Load high contrast preference
+    const savedHighContrast = localStorage.getItem('accessibility-high-contrast');
+    if (savedHighContrast === 'true') {
+        document.body.classList.add('high-contrast');
+    }
+    
+    // Load reduced motion preference
+    const savedReducedMotion = localStorage.getItem('accessibility-reduced-motion');
+    if (savedReducedMotion === 'true') {
+        document.body.classList.add('reduced-motion');
+    }
+    
+    // Handle accessibility feedback form
+    const feedbackForm = document.getElementById('accessibility-feedback-form');
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Here you would send the feedback to your server
+            // For now, we'll show a success message
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                showAccessibilityNotification('Feedback submitted successfully');
+                this.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+    }
+});
+
+// Add high contrast CSS
+const highContrastStyles = `
+    .high-contrast {
+        filter: contrast(150%);
+    }
+    
+    .high-contrast .card {
+        border: 2px solid var(--slate-900) !important;
+    }
+    
+    .high-contrast .btn {
+        border: 2px solid var(--slate-900) !important;
+    }
+`;
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = highContrastStyles;
+document.head.appendChild(styleSheet);
+</script>
+
+
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-brand">
+                        <div class="footer-brand-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                        </div>
+                        <div class="footer-brand-text">
+                            <h3>StockScan Pro</h3>
+                            <p>Professional Stock Analysis</p>
+                        </div>
+                    </a>
+                    <p class="footer-description">
+                        Advanced stock scanning and market analysis tools for professional traders and investors.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/stock-scanner">Stock Scanner</a></li>
+                        <li><a href="/market-overview">Market Overview</a></li>
+                        <li><a href="/watchlist">Watchlist</a></li>
+                        <li><a href="/news">Market News</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/security">Security</a></li>
+                        <li><a href="/accessibility">Accessibility</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    © 2024 StockScan Pro. All rights reserved. Market data provided by third-party sources.
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+    // Test mode JavaScript for form handling
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Testing accessibility page');
+        
+        // Mock AJAX form submissions for testing
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted:', form.id || 'unnamed form');
+                
+                // Show success message
+                const successDiv = document.createElement('div');
+                successDiv.className = 'form-success';
+                successDiv.textContent = 'Form submitted successfully (TEST MODE)';
+                form.insertBefore(successDiv, form.firstChild);
+                
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    successDiv.remove();
+                }, 3000);
+            });
+        });
+        
+        // Test accessibility controls
+        const accessibilityControls = document.querySelectorAll('.accessibility-control');
+        accessibilityControls.forEach(control => {
+            control.addEventListener('click', function() {
+                console.log('Accessibility control clicked:', this.textContent);
+            });
+        });
+        
+        // Test payment buttons
+        const paymentButtons = document.querySelectorAll('#paypal-button-container button, .btn');
+        paymentButtons.forEach(button => {
+            if (button.type !== 'submit') {
+                button.addEventListener('click', function(e) {
+                    if (this.textContent.includes('PayPal') || this.textContent.includes('Payment')) {
+                        e.preventDefault();
+                        console.log('Payment button clicked:', this.textContent);
+                        alert('Payment functionality would work in live environment');
+                    }
+                });
+            }
+        });
+    });
+    </script>
+</body>
+</html>
