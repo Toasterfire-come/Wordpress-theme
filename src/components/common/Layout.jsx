@@ -42,28 +42,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Bar */}
-        <div className="hidden lg:flex items-center justify-between py-2 text-sm text-slate-600 border-b border-slate-100">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <Phone className="h-4 w-4" />
-              <span>+1 (555) 123-4567</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Mail className="h-4 w-4" />
-              <span>support@stockscannerpro.com</span>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link to="/help" className="hover:text-slate-900 transition-colors">Help Center</Link>
-            <Link to="/contact" className="hover:text-slate-900 transition-colors">Contact</Link>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                MARKETS OPEN
-              </span>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Main Header */}
         <div className="flex items-center justify-between h-20">
