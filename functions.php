@@ -1,6 +1,7 @@
 <?php
 /**
  * Retail Trade Scanner Theme Functions
+ * React SPA with WordPress REST API Backend
  */
 
 // Prevent direct access
@@ -36,252 +37,129 @@ function retail_trade_scanner_setup() {
 add_action('after_setup_theme', 'retail_trade_scanner_setup');
 
 /**
- * Enqueue scripts and styles
+ * Enqueue React build files and configure for SPA
  */
 function retail_trade_scanner_scripts() {
-    // Enqueue theme stylesheet
-    wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '1.0.0');
+    // Dequeue WordPress default styles that might interfere with React
+    wp_dequeue_style('wp-block-library');
+    wp_dequeue_style('wp-block-library-theme');
+    wp_dequeue_style('global-styles');
     
-    // Enqueue React build files (if built)
-    $react_build_path = get_template_directory() . '/build/static/js/';
+    // Check if React build exists
+    $react_build_path = get_template_directory() . '/build/static/';
+    $react_build_url = get_template_directory_uri() . '/build/static/';
+    
     if (is_dir($react_build_path)) {
-        $js_files = glob($react_build_path . 'main.*.js');
-        $css_files = glob(get_template_directory() . '/build/static/css/main.*.css');
-        
-        if (!empty($js_files)) {
-            $js_file = basename($js_files[0]);
-            wp_enqueue_script('retail-trade-scanner-react', get_template_directory_uri() . '/build/static/js/' . $js_file, array(), '1.0.0', true);
-        }
+        // Production build
+        $js_files = glob($react_build_path . 'js/main.*.js');
+        $css_files = glob($react_build_path . 'css/main.*.css');
         
         if (!empty($css_files)) {
             $css_file = basename($css_files[0]);
-            wp_enqueue_style('retail-trade-scanner-react-css', get_template_directory_uri() . '/build/static/css/' . $css_file, array(), '1.0.0');
+            wp_enqueue_style('retail-trade-scanner-react-css', $react_build_url . 'css/' . $css_file, array(), '1.0.0');
+        }
+        
+        if (!empty($js_files)) {
+            $js_file = basename($js_files[0]);
+            wp_enqueue_script('retail-trade-scanner-react', $react_build_url . 'js/' . $js_file, array(), '1.0.0', true);
+        }
+        
+        // Add manifest.json for PWA support
+        $manifest_path = get_template_directory() . '/build/manifest.json';
+        if (file_exists($manifest_path)) {
+            add_action('wp_head', function() {
+                echo '<link rel="manifest" href="' . get_template_directory_uri() . '/build/manifest.json">';
+            });
         }
     } else {
-        // Development mode - enqueue development React
+        // Development mode - React dev server
         wp_enqueue_script('retail-trade-scanner-react-dev', 'http://localhost:3000/static/js/bundle.js', array(), '1.0.0', true);
     }
     
-    // Enqueue custom JavaScript
-    wp_enqueue_script('retail-trade-scanner-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '1.0.0', true);
-    
-    // Localize script for AJAX and REST API
-    wp_localize_script('retail-trade-scanner-script', 'retail_trade_scanner_data', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'rest_url' => rest_url('retail-trade-scanner/v1/'),
-        'nonce' => wp_create_nonce('retail_trade_scanner_nonce'),
-        'api_endpoints' => array(
-            'stocks' => rest_url('retail-trade-scanner/v1/stocks/'),
-            'market_data' => rest_url('retail-trade-scanner/v1/market-data/'),
-            'portfolio' => rest_url('retail-trade-scanner/v1/portfolio/'),
-            'watchlist' => rest_url('retail-trade-scanner/v1/watchlist/'),
-            'news' => rest_url('retail-trade-scanner/v1/news/'),
-        ),
-    ));
+    // Localize script with WordPress data for React
+    wp_localize_script(
+        is_dir($react_build_path) ? 'retail-trade-scanner-react' : 'retail-trade-scanner-react-dev',
+        'wpApiData',
+        array(
+            'apiUrl' => rest_url('retail-trade-scanner/v1/'),
+            'wpRestUrl' => rest_url('wp/v2/'),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'homeUrl' => home_url('/'),
+            'themeUrl' => get_template_directory_uri(),
+            'isLoggedIn' => is_user_logged_in(),
+            'currentUser' => is_user_logged_in() ? wp_get_current_user()->data : null,
+            'siteName' => get_bloginfo('name'),
+            'siteDescription' => get_bloginfo('description'),
+        )
+    );
 }
 add_action('wp_enqueue_scripts', 'retail_trade_scanner_scripts');
 
 /**
- * Create required pages on theme activation
- */
-function retail_trade_scanner_create_pages() {
-    $pages = array(
-        'home' => array(
-            'title' => 'Home',
-            'content' => 'Welcome to Retail Trade Scanner - Professional stock analysis and portfolio management platform.',
-            'template' => 'page-home.php'
-        ),
-        'dashboard' => array(
-            'title' => 'Dashboard',
-            'content' => 'Your personalized trading dashboard with portfolio overview and market insights.',
-            'template' => 'page-dashboard.php'
-        ),
-        'market-overview' => array(
-            'title' => 'Market Overview',
-            'content' => 'Real-time market data, major indices, top gainers and losers.',
-            'template' => 'page-market-overview.php'
-        ),
-        'scanner' => array(
-            'title' => 'Stock Scanner',
-            'content' => 'Advanced stock screening and filtering tools.',
-            'template' => 'page-scanner.php'
-        ),
-        'watchlist' => array(
-            'title' => 'Watchlist',
-            'content' => 'Create and manage your stock watchlists with real-time updates.',
-            'template' => 'page-watchlist.php'
-        ),
-        'portfolio' => array(
-            'title' => 'Portfolio',
-            'content' => 'Track your investment portfolio performance and analytics.',
-            'template' => 'page-portfolio.php'
-        ),
-        'news' => array(
-            'title' => 'Market News',
-            'content' => 'Latest market news with sentiment analysis and personalized feeds.',
-            'template' => 'page-news.php'
-        ),
-        'account' => array(
-            'title' => 'My Account',
-            'content' => 'Manage your account settings, billing, and preferences.',
-            'template' => 'page-account.php'
-        ),
-        'notifications' => array(
-            'title' => 'Notifications',
-            'content' => 'Manage your notification preferences and settings.',
-            'template' => 'page-notifications.php'
-        ),
-        'billing-history' => array(
-            'title' => 'Billing History',
-            'content' => 'View your billing history and download invoices.',
-            'template' => 'page-billing-history.php'
-        ),
-        'premium-plans' => array(
-            'title' => 'Premium Plans',
-            'content' => 'Choose your trading plan. From casual lookup users to professional trading firms.',
-            'template' => 'page-premium-plans.php'
-        ),
-        'compare-plans' => array(
-            'title' => 'Compare Plans',
-            'content' => 'Side-by-side comparison of our pricing plans and features.',
-            'template' => 'page-compare-plans.php'
-        ),
-        'contact' => array(
-            'title' => 'Contact Us',
-            'content' => 'Get in touch with our support team for assistance.',
-            'template' => 'page-contact.php'
-        ),
-        'signup' => array(
-            'title' => 'Sign Up',
-            'content' => 'Create your Retail Trade Scanner account and start trading.',
-            'template' => 'page-signup.php'
-        ),
-        'login' => array(
-            'title' => 'Login',
-            'content' => 'Access your Retail Trade Scanner account.',
-            'template' => 'page-login.php'
-        ),
-        'terms' => array(
-            'title' => 'Terms of Service',
-            'content' => 'Terms and conditions for using Retail Trade Scanner services.',
-            'template' => 'page-terms.php'
-        ),
-        'privacy' => array(
-            'title' => 'Privacy Policy',
-            'content' => 'Our commitment to protecting your privacy and data.',
-            'template' => 'page-privacy.php'
-        ),
-        'about' => array(
-            'title' => 'About Us',
-            'content' => 'Learn more about Retail Trade Scanner and our mission.',
-            'template' => 'page-about.php'
-        ),
-        'faq' => array(
-            'title' => 'FAQ',
-            'content' => 'Frequently asked questions about our platform and services.',
-            'template' => 'page-faq.php'
-        ),
-        'status' => array(
-            'title' => 'System Status',
-            'content' => 'Real-time system status and performance metrics.',
-            'template' => 'page-status.php'
-        )
-    );
-
-    foreach ($pages as $slug => $page_data) {
-        // Check if page already exists
-        $existing_page = get_page_by_path($slug);
-        
-        if (!$existing_page) {
-            $page_args = array(
-                'post_title'     => $page_data['title'],
-                'post_content'   => $page_data['content'],
-                'post_status'    => 'publish',
-                'post_type'      => 'page',
-                'post_name'      => $slug,
-                'comment_status' => 'closed',
-                'ping_status'    => 'closed'
-            );
-            
-            $page_id = wp_insert_post($page_args);
-            
-            if ($page_id && isset($page_data['template'])) {
-                update_post_meta($page_id, '_wp_page_template', $page_data['template']);
-            }
-            
-            // Set front page
-            if ($slug === 'home') {
-                update_option('show_on_front', 'page');
-                update_option('page_on_front', $page_id);
-            }
-        }
-    }
-}
-
-/**
- * Activate theme setup
- */
-function retail_trade_scanner_activate() {
-    retail_trade_scanner_create_pages();
-    flush_rewrite_rules();
-}
-add_action('after_switch_theme', 'retail_trade_scanner_activate');
-
-/**
- * Add custom body classes
- */
-function retail_trade_scanner_body_classes($classes) {
-    if (is_front_page()) {
-        $classes[] = 'front-page';
-    }
-    
-    if (is_page_template()) {
-        $template = get_page_template_slug();
-        $classes[] = 'page-template-' . sanitize_html_class(str_replace('.php', '', $template));
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'retail_trade_scanner_body_classes');
-
-/**
- * Register widget areas
- */
-function retail_trade_scanner_widgets_init() {
-    register_sidebar(array(
-        'name'          => __('Footer Widgets', 'retail-trade-scanner'),
-        'id'            => 'footer-widgets',
-        'description'   => __('Add widgets here to appear in the footer.', 'retail-trade-scanner'),
-        'before_widget' => '<section id="%1$s" class="widget %2$s">',
-        'after_widget'  => '</section>',
-        'before_title'  => '<h3 class="widget-title">',
-        'after_title'   => '</h3>',
-    ));
-}
-add_action('widgets_init', 'retail_trade_scanner_widgets_init');
-
-/**
- * REST API Endpoints for external backend integration
+ * Register REST API endpoints for React app
  */
 function retail_trade_scanner_register_rest_routes() {
+    // Proxy endpoint for external API
     register_rest_route('retail-trade-scanner/v1', '/proxy/(?P<endpoint>.*)', array(
         'methods' => array('GET', 'POST', 'PUT', 'DELETE'),
         'callback' => 'retail_trade_scanner_api_proxy',
+        'permission_callback' => '__return_true',
+    ));
+    
+    // Market data endpoints
+    register_rest_route('retail-trade-scanner/v1', '/market-data', array(
+        'methods' => 'GET',
+        'callback' => 'retail_trade_scanner_get_market_data',
+        'permission_callback' => '__return_true',
+    ));
+    
+    register_rest_route('retail-trade-scanner/v1', '/stocks/(?P<symbol>[a-zA-Z0-9]+)', array(
+        'methods' => 'GET',
+        'callback' => 'retail_trade_scanner_get_stock_data',
+        'permission_callback' => '__return_true',
+    ));
+    
+    // User-specific endpoints (require authentication)
+    register_rest_route('retail-trade-scanner/v1', '/watchlist', array(
+        'methods' => array('GET', 'POST', 'DELETE'),
+        'callback' => 'retail_trade_scanner_handle_watchlist',
+        'permission_callback' => 'is_user_logged_in',
+    ));
+    
+    register_rest_route('retail-trade-scanner/v1', '/portfolio', array(
+        'methods' => array('GET', 'POST', 'PUT'),
+        'callback' => 'retail_trade_scanner_handle_portfolio',
+        'permission_callback' => 'is_user_logged_in',
+    ));
+    
+    // Contact form endpoint
+    register_rest_route('retail-trade-scanner/v1', '/contact', array(
+        'methods' => 'POST',
+        'callback' => 'retail_trade_scanner_handle_contact',
+        'permission_callback' => '__return_true',
+    ));
+    
+    // System status endpoint
+    register_rest_route('retail-trade-scanner/v1', '/status', array(
+        'methods' => 'GET',
+        'callback' => 'retail_trade_scanner_get_system_status',
         'permission_callback' => '__return_true',
     ));
 }
 add_action('rest_api_init', 'retail_trade_scanner_register_rest_routes');
 
 /**
- * API Proxy to external backend
+ * API Proxy to external backend (FastAPI)
  */
 function retail_trade_scanner_api_proxy($request) {
     $endpoint = $request->get_param('endpoint');
     $method = $request->get_method();
     $params = $request->get_params();
     
-    // Get backend URL from options or environment
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'http://localhost:8001/api';
+    // Get backend URL from environment or options
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') 
+        ? RETAIL_TRADE_SCANNER_API_URL 
+        : get_option('retail_trade_scanner_api_url', 'http://localhost:8001/api');
     
     $api_url = trailingslashit($backend_url) . $endpoint;
     
@@ -314,156 +192,258 @@ function retail_trade_scanner_api_proxy($request) {
 }
 
 /**
- * AJAX Handlers for backward compatibility
+ * Market data endpoint
  */
-function retail_trade_scanner_ajax_handler() {
-    check_ajax_referer('retail_trade_scanner_nonce', 'nonce');
-    
-    $action_map = array(
-        'stock_scanner_get_quote' => 'get_stock_quote',
-        'get_major_indices' => 'get_major_indices',
-        'get_market_movers' => 'get_market_movers',
-        'add_to_watchlist' => 'add_to_watchlist',
-        'remove_from_watchlist' => 'remove_from_watchlist',
-        'get_usage_stats' => 'get_usage_stats',
-        'get_formatted_portfolio_data' => 'get_portfolio_data',
-        'get_formatted_watchlist_data' => 'get_watchlist_data',
-        'update_user_account' => 'update_account',
-        'update_user_settings' => 'update_settings',
-        'change_password' => 'change_password',
-        'update_payment_method' => 'update_payment',
-        'get_billing_history' => 'get_billing_history',
-        'update_notification_settings' => 'update_notifications',
-    );
-    
-    $ajax_action = sanitize_text_field($_POST['ajax_action']);
-    
-    if (!isset($action_map[$ajax_action])) {
-        wp_send_json_error('Invalid action');
-        return;
-    }
-    
-    $backend_action = $action_map[$ajax_action];
-    $data = array_map('sanitize_text_field', $_POST);
-    
-    // Proxy to external API
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'http://localhost:8001/api';
-    $api_url = trailingslashit($backend_url) . $backend_action;
-    
-    $response = wp_remote_post($api_url, array(
-        'body' => json_encode($data),
-        'headers' => array('Content-Type' => 'application/json'),
-        'timeout' => 30,
-    ));
-    
-    if (is_wp_error($response)) {
-        wp_send_json_error($response->get_error_message());
-        return;
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $result = json_decode($body, true);
-    
-    wp_send_json_success($result);
-}
-
-// Register AJAX handlers
-$ajax_actions = array(
-    'stock_scanner_get_quote', 'get_major_indices', 'get_market_movers',
-    'add_to_watchlist', 'remove_from_watchlist', 'get_usage_stats',
-    'get_formatted_portfolio_data', 'get_formatted_watchlist_data',
-    'update_user_account', 'update_user_settings', 'change_password',
-    'update_payment_method', 'get_billing_history', 'update_notification_settings'
-);
-
-foreach ($ajax_actions as $action) {
-    add_action("wp_ajax_$action", 'retail_trade_scanner_ajax_handler');
-    add_action("wp_ajax_nopriv_$action", 'retail_trade_scanner_ajax_handler');
+function retail_trade_scanner_get_market_data($request) {
+    // Mock data for now - replace with actual API call
+    return new WP_REST_Response(array(
+        'success' => true,
+        'data' => array(
+            'indices' => array(
+                array('symbol' => 'SPY', 'price' => 445.67, 'change' => 2.34, 'percent' => 0.53),
+                array('symbol' => 'QQQ', 'price' => 378.92, 'change' => -1.45, 'percent' => -0.38),
+                array('symbol' => 'DIA', 'price' => 345.23, 'change' => 1.87, 'percent' => 0.54),
+            ),
+            'timestamp' => time()
+        )
+    ), 200);
 }
 
 /**
- * Add theme customization options
+ * Stock data endpoint
+ */
+function retail_trade_scanner_get_stock_data($request) {
+    $symbol = $request->get_param('symbol');
+    
+    // Mock data - replace with actual API call
+    return new WP_REST_Response(array(
+        'success' => true,
+        'data' => array(
+            'symbol' => strtoupper($symbol),
+            'price' => rand(50, 500) + (rand(0, 99) / 100),
+            'change' => rand(-10, 10) + (rand(0, 99) / 100),
+            'percent' => rand(-5, 5) + (rand(0, 99) / 100),
+            'volume' => rand(1000000, 50000000),
+            'timestamp' => time()
+        )
+    ), 200);
+}
+
+/**
+ * Watchlist handler
+ */
+function retail_trade_scanner_handle_watchlist($request) {
+    $user_id = get_current_user_id();
+    $method = $request->get_method();
+    
+    switch ($method) {
+        case 'GET':
+            $watchlist = get_user_meta($user_id, 'stock_watchlist', true);
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => $watchlist ?: array()
+            ), 200);
+            
+        case 'POST':
+            $symbol = $request->get_param('symbol');
+            $watchlist = get_user_meta($user_id, 'stock_watchlist', true) ?: array();
+            
+            if (!in_array($symbol, $watchlist)) {
+                $watchlist[] = $symbol;
+                update_user_meta($user_id, 'stock_watchlist', $watchlist);
+            }
+            
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => $watchlist
+            ), 200);
+            
+        case 'DELETE':
+            $symbol = $request->get_param('symbol');
+            $watchlist = get_user_meta($user_id, 'stock_watchlist', true) ?: array();
+            $watchlist = array_diff($watchlist, array($symbol));
+            
+            update_user_meta($user_id, 'stock_watchlist', array_values($watchlist));
+            
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => array_values($watchlist)
+            ), 200);
+    }
+}
+
+/**
+ * Portfolio handler
+ */
+function retail_trade_scanner_handle_portfolio($request) {
+    $user_id = get_current_user_id();
+    $method = $request->get_method();
+    
+    switch ($method) {
+        case 'GET':
+            $portfolio = get_user_meta($user_id, 'stock_portfolio', true);
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => $portfolio ?: array()
+            ), 200);
+            
+        case 'POST':
+        case 'PUT':
+            $portfolio_data = $request->get_json_params();
+            update_user_meta($user_id, 'stock_portfolio', $portfolio_data);
+            
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => $portfolio_data
+            ), 200);
+    }
+}
+
+/**
+ * Contact form handler
+ */
+function retail_trade_scanner_handle_contact($request) {
+    $data = $request->get_json_params();
+    
+    $name = sanitize_text_field($data['name'] ?? '');
+    $email = sanitize_email($data['email'] ?? '');
+    $message = sanitize_textarea_field($data['message'] ?? '');
+    
+    if (empty($name) || empty($email) || empty($message)) {
+        return new WP_Error('missing_fields', 'All fields are required', array('status' => 400));
+    }
+    
+    // Send email
+    $to = get_option('admin_email');
+    $subject = 'Contact Form: ' . $name;
+    $body = "Name: $name\nEmail: $email\n\nMessage:\n$message";
+    $headers = array('Content-Type: text/plain; charset=UTF-8');
+    
+    $sent = wp_mail($to, $subject, $body, $headers);
+    
+    return new WP_REST_Response(array(
+        'success' => $sent,
+        'message' => $sent ? 'Message sent successfully' : 'Failed to send message'
+    ), $sent ? 200 : 500);
+}
+
+/**
+ * System status endpoint
+ */
+function retail_trade_scanner_get_system_status($request) {
+    return new WP_REST_Response(array(
+        'success' => true,
+        'data' => array(
+            'status' => 'operational',
+            'uptime' => '99.98%',
+            'response_time' => '145ms',
+            'last_updated' => time()
+        )
+    ), 200);
+}
+
+/**
+ * Handle React Router URLs by serving the main template
+ */
+function retail_trade_scanner_template_redirect() {
+    // Don't interfere with admin, API, or asset requests
+    if (is_admin() || 
+        strpos($_SERVER['REQUEST_URI'], '/wp-json/') !== false ||
+        strpos($_SERVER['REQUEST_URI'], '/wp-content/') !== false ||
+        strpos($_SERVER['REQUEST_URI'], '/wp-includes/') !== false) {
+        return;
+    }
+    
+    // For all other requests, serve the React app
+    global $wp_query;
+    $wp_query->is_404 = false;
+    status_header(200);
+    include get_template_directory() . '/index.php';
+    exit;
+}
+add_action('template_redirect', 'retail_trade_scanner_template_redirect');
+
+/**
+ * Add CORS headers for API requests
+ */
+function retail_trade_scanner_add_cors_headers() {
+    if (strpos($_SERVER['REQUEST_URI'], '/wp-json/') !== false) {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-WP-Nonce');
+    }
+}
+add_action('init', 'retail_trade_scanner_add_cors_headers');
+
+/**
+ * Create required pages on theme activation (for URL structure)
+ */
+function retail_trade_scanner_create_pages() {
+    $pages = array(
+        'dashboard', 'market-overview', 'scanner', 'watchlist', 'portfolio', 
+        'news', 'account', 'premium-plans', 'compare-plans', 'contact', 
+        'login', 'signup', 'terms', 'privacy', 'about', 'status'
+    );
+
+    foreach ($pages as $slug) {
+        $existing_page = get_page_by_path($slug);
+        
+        if (!$existing_page) {
+            $page_args = array(
+                'post_title'     => ucwords(str_replace('-', ' ', $slug)),
+                'post_content'   => '', // Empty content - React will handle
+                'post_status'    => 'publish',
+                'post_type'      => 'page',
+                'post_name'      => $slug,
+                'comment_status' => 'closed',
+                'ping_status'    => 'closed'
+            );
+            
+            wp_insert_post($page_args);
+        }
+    }
+}
+
+/**
+ * Theme activation
+ */
+function retail_trade_scanner_activate() {
+    retail_trade_scanner_create_pages();
+    flush_rewrite_rules();
+}
+add_action('after_switch_theme', 'retail_trade_scanner_activate');
+
+/**
+ * Add customizer options for API configuration
  */
 function retail_trade_scanner_customize_register($wp_customize) {
-    // Add section
-    $wp_customize->add_section('retail_trade_scanner_options', array(
-        'title' => __('Retail Trade Scanner Options', 'retail-trade-scanner'),
+    $wp_customize->add_section('retail_trade_scanner_api', array(
+        'title' => __('API Configuration', 'retail-trade-scanner'),
         'priority' => 30,
     ));
     
-    // Add API endpoint setting
-    $wp_customize->add_setting('retail_trade_scanner_api_endpoint', array(
-        'default' => '',
+    $wp_customize->add_setting('retail_trade_scanner_api_url', array(
+        'default' => 'http://localhost:8001/api',
         'sanitize_callback' => 'esc_url_raw',
     ));
     
-    $wp_customize->add_control('retail_trade_scanner_api_endpoint', array(
-        'label' => __('API Endpoint URL', 'retail-trade-scanner'),
-        'section' => 'retail_trade_scanner_options',
+    $wp_customize->add_control('retail_trade_scanner_api_url', array(
+        'label' => __('External API URL', 'retail-trade-scanner'),
+        'section' => 'retail_trade_scanner_api',
         'type' => 'url',
+        'description' => __('URL for the external FastAPI backend', 'retail-trade-scanner'),
     ));
 }
 add_action('customize_register', 'retail_trade_scanner_customize_register');
 
 /**
- * Admin notice for theme activation
+ * Remove WordPress head elements that aren't needed for SPA
  */
-function retail_trade_scanner_admin_notice() {
-    if (get_transient('retail_trade_scanner_activated')) {
-        ?>
-        <div class="notice notice-success is-dismissible">
-            <p><?php _e('Retail Trade Scanner theme activated! All required pages have been created automatically.', 'retail-trade-scanner'); ?></p>
-        </div>
-        <?php
-        delete_transient('retail_trade_scanner_activated');
-    }
+function retail_trade_scanner_clean_head() {
+    remove_action('wp_head', 'wp_generator');
+    remove_action('wp_head', 'wlwmanifest_link');
+    remove_action('wp_head', 'rsd_link');
+    remove_action('wp_head', 'wp_shortlink_wp_head');
+    remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
 }
-add_action('admin_notices', 'retail_trade_scanner_admin_notice');
-
-/**
- * Set transient on theme activation
- */
-function retail_trade_scanner_set_activation_transient() {
-    set_transient('retail_trade_scanner_activated', true, 30);
-}
-add_action('after_switch_theme', 'retail_trade_scanner_set_activation_transient');
-
-/**
- * Create assets directory and main.js if they don't exist
- */
-function retail_trade_scanner_ensure_assets() {
-    $assets_dir = get_template_directory() . '/assets/js/';
-    
-    if (!is_dir($assets_dir)) {
-        wp_mkdir_p($assets_dir);
-    }
-    
-    $main_js_file = $assets_dir . 'main.js';
-    if (!file_exists($main_js_file)) {
-        $js_content = '
-// Retail Trade Scanner - Main JavaScript
-document.addEventListener("DOMContentLoaded", function() {
-    // Initialize search bar expansion
-    const searchInput = document.querySelector(".search-input");
-    if (searchInput) {
-        searchInput.addEventListener("focus", function() {
-            this.classList.add("expanded");
-        });
-        
-        searchInput.addEventListener("blur", function() {
-            if (!this.value) {
-                this.classList.remove("expanded");
-            }
-        });
-    }
-    
-    // Initialize React app if React root exists
-    if (document.getElementById("react-root")) {
-        console.log("React integration ready");
-    }
-});
-';
-        file_put_contents($main_js_file, $js_content);
-    }
-}
-add_action('after_setup_theme', 'retail_trade_scanner_ensure_assets');
+add_action('init', 'retail_trade_scanner_clean_head');
