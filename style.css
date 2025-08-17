@@ -1,17 +1,17 @@
 /*
-Theme Name: Stock Scanner Pro
-Description: Professional stock analysis and portfolio management theme with tiered pricing and rate limiting
-Author: Stock Scanner Pro
+Theme Name: Retail Trade Scanner
+Description: Professional stock analysis and portfolio management theme with React integration
+Author: Retail Trade Scanner
 Version: 1.0.0
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
 License: GPL v2 or later
-Tags: business, finance, stock-market, trading, portfolio, responsive, custom-colors, custom-menu, featured-images, footer-widgets, sticky-post, theme-options
-Text Domain: stock-scanner-pro
+Tags: business, finance, stock-market, trading, portfolio, responsive, custom-colors, custom-menu, featured-images, footer-widgets, sticky-post, theme-options, react
+Text Domain: retail-trade-scanner
 */
 
-/* Stock Scanner Pro - Professional Trading Interface */
+/* Retail Trade Scanner - Professional Trading Interface with React */
 
 /* CSS Variables for consistent theming */
 :root {
@@ -54,6 +54,13 @@ body {
   background-color: var(--slate-50);
 }
 
+/* React root container */
+#react-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Container and layout */
 .container {
   max-width: 1200px;
@@ -73,6 +80,8 @@ body {
   color: white;
   padding: 1rem 0;
   box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 50;
 }
 
 .header-content {
@@ -100,6 +109,41 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
+}
+
+/* Expandable Search Bar */
+.search-container {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.search-input {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--slate-600);
+  border-radius: 20px;
+  background: transparent;
+  color: white;
+  padding: 0 40px 0 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.search-input:focus,
+.search-input.expanded {
+  width: 300px;
+  cursor: text;
+  background: var(--slate-800);
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--slate-400);
+  pointer-events: none;
 }
 
 /* Navigation */
@@ -197,142 +241,11 @@ body {
   font-size: 0.875rem;
 }
 
-/* Hero section */
-.hero-section {
-  background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 100%);
-  color: white;
-  padding: 6rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  line-height: 1.1;
-}
-
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: var(--slate-300);
-  margin-bottom: 3rem;
-  line-height: 1.6;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-}
-
-/* Pricing cards */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin: 3rem 0;
-}
-
-.pricing-card {
-  background: white;
-  border: 2px solid var(--slate-200);
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.pricing-card.popular {
-  border-color: var(--emerald-600);
-  transform: scale(1.05);
-}
-
-.pricing-card.popular::before {
-  content: "Most Popular";
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--emerald-600);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.price {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--slate-900);
-  margin: 1rem 0;
-}
-
-.price-period {
-  font-size: 1rem;
-  color: var(--slate-600);
-}
-
-/* Feature lists */
-.feature-list {
-  list-style: none;
-  margin: 2rem 0;
-  text-align: left;
-}
-
-.feature-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.875rem;
-}
-
-.feature-list .checkmark {
-  color: var(--emerald-600);
-  font-weight: bold;
-}
-
-.feature-list .x-mark {
-  color: var(--slate-400);
-  font-weight: bold;
-}
-
-/* Grid layouts */
-.two-column {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.three-column {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  
-  .two-column {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  
-  .pricing-card.popular {
-    transform: none;
+  .search-input:focus,
+  .search-input.expanded {
+    width: 250px;
   }
   
   .header-content {
@@ -400,4 +313,19 @@ body {
 
 .alignright {
   text-align: right;
+}
+
+/* Loading and error states */
+.loading-spinner {
+  border: 4px solid var(--slate-200);
+  border-top: 4px solid var(--emerald-600);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
