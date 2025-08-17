@@ -68,3 +68,48 @@ body {
 	.footer-grid { grid-template-columns: 1fr; }
 	.full-nav { display: none; }
 }
+
+/* Section cards inside page content */
+.card {
+	background: #fff;
+	border: 1px solid var(--slate-100);
+	border-radius: 0.75rem;
+	padding: 1rem;
+	margin-top: 1rem;
+}
+
+/* Header market snippet */
+.market-status { display: flex; align-items: center; gap: 0.5rem; }
+.market-label { color: var(--slate-500); font-size: 0.875rem; }
+.market-value { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Footer minor layout */
+.footer-bottom { border-top: 1px solid var(--slate-100); margin-top: 1rem; padding-top: 1rem; }
+
+/* Accessibility modes */
+body.high-contrast {
+	background: var(--slate-900);
+	color: #fff;
+}
+body.high-contrast .site-header,
+body.high-contrast .site-footer,
+body.high-contrast .page-content,
+body.high-contrast .card {
+	background: var(--slate-800);
+	border-color: var(--slate-500);
+	color: #fff;
+}
+body.high-contrast a { color: var(--emerald-400); text-decoration: underline; }
+body.high-contrast .footer-links a { color: var(--slate-300); }
+body.high-contrast .footer-links a:hover { color: var(--emerald-400); }
+body.high-contrast .btn { background: var(--emerald-400); color: #053; }
+body.high-contrast .btn.secondary { background: var(--slate-500); color: #fff; }
+
+/* Reduced motion utility */
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after {
+	animation: none !important;
+	transition: none !important;
+	scroll-behavior: auto !important;
+}

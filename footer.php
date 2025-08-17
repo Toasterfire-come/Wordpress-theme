@@ -24,13 +24,22 @@
 				</div>
 				<div class="footer-section">
 					<h4>Quick Links</h4>
-					<ul class="footer-links">
-						<li><a href="<?php echo home_url('/dashboard'); ?>">Dashboard</a></li>
-						<li><a href="<?php echo home_url('/stock-scanner'); ?>">Stock Scanner</a></li>
-						<li><a href="<?php echo home_url('/market-overview'); ?>">Market Overview</a></li>
-						<li><a href="<?php echo home_url('/watchlist'); ?>">Watchlist</a></li>
-						<li><a href="<?php echo home_url('/news'); ?>">Market News</a></li>
-					</ul>
+					<?php if ( has_nav_menu('footer') ) : ?>
+						<?php wp_nav_menu([
+							'theme_location' => 'footer',
+							'container' => false,
+							'menu_class' => 'footer-links',
+							'fallback_cb' => false,
+						]); ?>
+					<?php else : ?>
+						<ul class="footer-links">
+							<li><a href="<?php echo home_url('/dashboard'); ?>">Dashboard</a></li>
+							<li><a href="<?php echo home_url('/stock-scanner'); ?>">Stock Scanner</a></li>
+							<li><a href="<?php echo home_url('/market-overview'); ?>">Market Overview</a></li>
+							<li><a href="<?php echo home_url('/watchlist'); ?>">Watchlist</a></li>
+							<li><a href="<?php echo home_url('/news'); ?>">Market News</a></li>
+						</ul>
+					<?php endif; ?>
 				</div>
 				<div class="footer-section">
 					<h4>Legal</h4>

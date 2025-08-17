@@ -10,6 +10,7 @@
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class('no-sidebar'); ?>>
+	<?php wp_body_open(); ?>
 	<div class="app-container">
 		<div class="main-content-area">
 			<header class="site-header">
@@ -40,13 +41,22 @@
 						</div>
 					</div>
 					<nav class="full-nav">
-						<ul class="nav-list">
-							<li class="nav-item"><a href="<?php echo home_url('/dashboard'); ?>">Dashboard</a></li>
-							<li class="nav-item"><a href="<?php echo home_url('/market-overview'); ?>">Markets</a></li>
-							<li class="nav-item"><a href="<?php echo home_url('/stock-scanner'); ?>">Scanner</a></li>
-							<li class="nav-item"><a href="<?php echo home_url('/watchlist'); ?>">Watchlist</a></li>
-							<li class="nav-item"><a href="<?php echo home_url('/news'); ?>">News</a></li>
-						</ul>
+						<?php if ( has_nav_menu('primary') ) : ?>
+							<?php wp_nav_menu([
+								'theme_location' => 'primary',
+								'container' => false,
+								'menu_class' => 'nav-list',
+								'fallback_cb' => false,
+							]); ?>
+						<?php else : ?>
+							<ul class="nav-list">
+								<li class="nav-item"><a href="<?php echo home_url('/dashboard'); ?>">Dashboard</a></li>
+								<li class="nav-item"><a href="<?php echo home_url('/market-overview'); ?>">Markets</a></li>
+								<li class="nav-item"><a href="<?php echo home_url('/stock-scanner'); ?>">Scanner</a></li>
+								<li class="nav-item"><a href="<?php echo home_url('/watchlist'); ?>">Watchlist</a></li>
+								<li class="nav-item"><a href="<?php echo home_url('/news'); ?>">News</a></li>
+							</ul>
+						<?php endif; ?>
 					</nav>
 				</div>
 			</header>
