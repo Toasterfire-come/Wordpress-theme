@@ -1,50 +1,15 @@
-<?php
-/**
- * The template for displaying all pages
- * Retail Trade Scanner Theme
- */
+<?php get_header(); ?>
 
-get_header(); ?>
+<!-- React App Root Container -->
+<div id="root"></div>
 
-<main id="main" class="site-main">
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
-        <?php
-        while (have_posts()) :
-            the_post();
-            ?>
-            <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                <header class="entry-header" style="text-align: center; margin-bottom: 3rem;">
-                    <h1 class="entry-title" style="font-size: 3rem; font-weight: bold; color: #0f172a; margin-bottom: 1rem;">
-                        <?php the_title(); ?>
-                    </h1>
-                    <?php if (get_the_excerpt()) : ?>
-                        <div style="font-size: 1.25rem; color: #64748b;">
-                            <?php the_excerpt(); ?>
-                        </div>
-                    <?php endif; ?>
-                </header>
-
-                <div class="entry-content" style="max-width: 800px; margin: 0 auto;">
-                    <?php
-                    the_content();
-
-                    wp_link_pages(array(
-                        'before' => '<div class="page-links" style="margin-top: 2rem; text-align: center;">' . esc_html__('Pages:', 'retail-trade-scanner'),
-                        'after'  => '</div>',
-                        'link_before' => '<span class="btn btn-outline" style="margin: 0 0.25rem;">',
-                        'link_after' => '</span>',
-                    ));
-                    ?>
-                </div>
-            </article>
-            <?php
-            // If comments are open or we have at least one comment, load up the comment template.
-            if (comments_open() || get_comments_number()) :
-                comments_template();
-            endif;
-        endwhile;
-        ?>
+<!-- Fallback content for WordPress pages -->
+<noscript>
+    <div style="padding: 2rem; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <h1><?php bloginfo('name'); ?></h1>
+        <p>This application requires JavaScript to be enabled in your browser.</p>
+        <p>Please enable JavaScript and refresh the page.</p>
     </div>
-</main>
+</noscript>
 
 <?php get_footer(); ?>
