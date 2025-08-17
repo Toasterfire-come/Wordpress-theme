@@ -10,8 +10,8 @@ add_action('wp_enqueue_scripts', function() {
 	$theme_version = '1.0.0';
 	wp_enqueue_style('stockscan-style', get_stylesheet_uri(), [], $theme_version);
 
-	// Main script
-	wp_enqueue_script('stockscan-main', get_template_directory_uri() . '/js/main.js', ['jquery'], $theme_version, true);
+	// Main script (load in header so inline templates can use localized data)
+	wp_enqueue_script('stockscan-main', get_template_directory_uri() . '/js/main.js', ['jquery'], $theme_version, false);
 
 	// Localize ajax and nonce
 	wp_localize_script('stockscan-main', 'StockScan', [
