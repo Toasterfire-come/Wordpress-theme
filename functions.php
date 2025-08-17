@@ -8,21 +8,25 @@ if (!defined('ABSPATH')) { exit; }
 // Enqueue styles and scripts
 add_action('wp_enqueue_scripts', function() {
 	$theme_version = '1.0.0';
+
+	// React app CSS (do not load theme style.css)
 	$react_css_path = get_template_directory() . '/js/app.css';
 	$react_css_uri  = get_template_directory_uri() . '/js/app.css';
 	if (file_exists($react_css_path)) {
 		wp_enqueue_style('react-app-style', $react_css_uri, [], $theme_version);
-	} else {
-		wp_enqueue_style('stockscan-style', get_stylesheet_uri(), [], $theme_version);
 	}
+
+	// Provide React and ReactDOM from CDN
+	wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', false);
+	wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', false);
 
 	// Main script (load in header so inline templates can use localized data)
 	wp_enqueue_script('stockscan-main', get_template_directory_uri() . '/js/main.js', ['jquery'], $theme_version, false);
 
-	// Enqueue React app bundle if present (built asset placed in theme's js/ directory)
+	// Enqueue React app bundle (placed in theme's js/ directory)
 	$react_js_path = get_template_directory() . '/js/app.js';
 	if (file_exists($react_js_path)) {
-		wp_enqueue_script('react-app', get_template_directory_uri() . '/js/app.js', [], $theme_version, true);
+		wp_enqueue_script('react-app', get_template_directory_uri() . '/js/app.js', ['react','react-dom'], $theme_version, true);
 	}
 
 	// Localize ajax and nonce
@@ -31,6 +35,20 @@ add_action('wp_enqueue_scripts', function() {
 		'nonce' => wp_create_nonce('stockscan_nonce'),
 		'api_base' => trailingslashit(home_url('/api/')),
 	]);
+});
+
+// Remove WP frontend styles to prevent native CSS from affecting React UI
+add_action('wp_enqueue_scripts', function(){
+	wp_dequeue_style('wp-block-library');
+	wp_dequeue_style('wp-block-library-theme');
+	wp_dequeue_style('global-styles');
+	wp_dequeue_style('classic-theme-styles');
+}, 100);
+
+// Hide admin bar on the front-end to avoid native WP UI elements
+add_filter('show_admin_bar', function($show){
+	if (is_admin()) { return $show; }
+	return false;
 });
 
 // Helper: Proxy to backend API (Django/FastAPI)
@@ -415,3 +433,9 @@ function stockscan_output_seo_meta() {
 	echo '<script type="application/ld+json">' . wp_json_encode($website) . '</script>' . "\n";
 }
 add_action('wp_head', 'stockscan_output_seo_meta', 5);
+
+add_filter('template_include', function($template){
+	if (is_admin()) { return $template; }
+	$index = get_index_template();
+	return $index ? $index : $template;
+}, 9999);
