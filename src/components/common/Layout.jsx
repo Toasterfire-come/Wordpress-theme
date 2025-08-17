@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Search, 
-  Bell, 
   Settings, 
   User, 
   Menu,
@@ -107,12 +106,6 @@ const Header = () => {
             </div>
 
             {/* Action Buttons */}
-            <button className="p-3 text-slate-600 hover:text-emerald-600 hover:bg-slate-100 rounded-xl relative transition-colors duration-200">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-xs font-bold text-white">3</span>
-              </span>
-            </button>
 
             <Link
               to="/settings"
