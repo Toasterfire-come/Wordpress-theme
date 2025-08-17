@@ -113,7 +113,7 @@ const Contact = () => {
   const faqs = [
     {
       question: "How do I get started with Stock Scanner Pro?",
-      answer: "Simply sign up for a free 14-day trial. No credit card required. You'll have immediate access to all features and can upgrade anytime during or after the trial."
+      answer: "sign up for free"
     },
     {
       question: "What markets and exchanges do you cover?",
