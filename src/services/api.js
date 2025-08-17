@@ -88,6 +88,29 @@ export const stockAPI = {
     return { success: true, data: { requests_used: 5, requests_limit: 15 } };
   },
 
+  // User Account - Real API calls
+  async getUserAccount() {
+    return await apiCall('/user/me');
+  },
+
+  async updateUserAccount(data) {
+    return await apiCall('/user/me', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  async getUserSettings() {
+    return await apiCall('/user/settings');
+  },
+
+  async updateUserSettings(data) {
+    return await apiCall('/user/settings', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
   // Mock all other methods
   async getFormattedWatchlistData() { return { success: true, data: [] }; },
   async addToWatchlist(symbol) { return { success: true }; },
