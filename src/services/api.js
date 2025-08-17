@@ -1,106 +1,227 @@
-// Stock Scanner Pro - API Integration
-// Professional API service for production-ready application
+// Stock Scanner Pro - WordPress REST API Integration
+// Professional API service for React SPA with WordPress backend
 
 import React from 'react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Get WordPress API configuration from localized data
+const getWpApiData = () => {
+  return window.wpApiData || {
+    apiUrl: '/wp-json/retail-trade-scanner/v1/',
+    wpRestUrl: '/wp-json/wp/v2/',
+    nonce: '',
+    homeUrl: '/',
+    isLoggedIn: false,
+    currentUser: null
+  };
+};
 
-// Basic API Handler
-export const apiCall = async (endpoint, options = {}) => {
+// WordPress REST API Handler
+export const wpApiCall = async (endpoint, options = {}) => {
+  const wpData = getWpApiData();
+  const url = endpoint.startsWith('http') ? endpoint : `${wpData.apiUrl}${endpoint.replace(/^\//, '')}`;
+  
   try {
-    const response = await fetch(`${API}${endpoint}`, {
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        'X-WP-Nonce': wpData.nonce,
         ...options.headers
       },
+      credentials: 'same-origin',
       ...options
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error(`API Error (${endpoint}):`, error);
+    console.error(`WordPress API Error (${endpoint}):`, error);
     return { success: false, error: error.message };
   }
 };
 
-// WordPress Admin Ajax Handler (for compatibility)
-export const wordPressAjax = async (action, data = {}) => {
-  // For now, return mock data since we're using FastAPI backend
-  console.log(`Mock WordPress AJAX call: ${action}`, data);
-  return { success: true, message: 'Mock response' };
+// External API proxy through WordPress
+export const externalApiCall = async (endpoint, options = {}) => {
+  return await wpApiCall(`proxy/${endpoint}`, options);
 };
 
-// WordPress REST API Handler (for compatibility)  
-export const wordPressRest = async (endpoint, options = {}) => {
-  // For now, return mock data since we're using FastAPI backend
-  console.log(`Mock WordPress REST call: ${endpoint}`, options);
-  return { success: true, message: 'Mock response' };
+// WordPress native REST API calls
+export const wpRestCall = async (endpoint, options = {}) => {
+  const wpData = getWpApiData();
+  const url = `${wpData.wpRestUrl}${endpoint.replace(/^\//, '')}`;
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': wpData.nonce,
+        ...options.headers
+      },
+      credentials: 'same-origin',
+      ...options
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`WordPress REST Error (${endpoint}):`, error);
+    return { success: false, error: error.message };
+  }
 };
 
-// Stock Scanner API Integration
+// Main Stock Scanner API Integration
 export const stockAPI = {
-  // Market Data - Real API call
+  // Market Data
   async getMarketData() {
-    return await apiCall('/market-data');
+    return await wpApiCall('market-data');
   },
 
   async getMajorIndices() {
-    return { success: true, data: [] };
+    return await wpApiCall('market-data');
   },
 
   async getMarketMovers() {
-    return { success: true, data: [] };
+    return await wpApiCall('market-data');
   },
 
-  // Basic API calls
+  // Stock Data
   async getStockQuote(symbol) {
-    return await apiCall(`/stocks/${symbol}`);
+    return await wpApiCall(`stocks/${symbol}`);
   },
 
   async getStockData(symbol) {
-    return await apiCall(`/stocks/${symbol}`);
+    return await wpApiCall(`stocks/${symbol}`);
   },
 
   async searchStocks(query) {
-    return await apiCall(`/stocks/search?q=${encodeURIComponent(query)}`);
+    return await externalApiCall(`stocks/search?q=${encodeURIComponent(query)}`);
   },
 
-  // For all other methods, return mock data for now
+  // Watchlist Management (requires authentication)
   async getWatchlist() {
-    return { success: true, data: [] };
+    return await wpApiCall('watchlist');
   },
 
+  async addToWatchlist(symbol) {
+    return await wpApiCall('watchlist', {
+      method: 'POST',
+      body: JSON.stringify({ symbol })
+    });
+  },
+
+  async removeFromWatchlist(symbol) {
+    return await wpApiCall(`watchlist?symbol=${symbol}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // Portfolio Management (requires authentication)
   async getPortfolio() {
-    return { success: true, data: [] };
+    return await wpApiCall('portfolio');
   },
 
+  async updatePortfolio(portfolioData) {
+    return await wpApiCall('portfolio', {
+      method: 'PUT',
+      body: JSON.stringify(portfolioData)
+    });
+  },
+
+  // Contact Form
+  async submitContactForm(formData) {
+    return await wpApiCall('contact', {
+      method: 'POST',
+      body: JSON.stringify(formData)
+    });
+  },
+
+  // System Status
+  async getSystemStatus() {
+    return await wpApiCall('status');
+  },
+
+  // News (proxy to external API)
   async getNews(limit = 10) {
-    return { success: true, data: [] };
+    return await externalApiCall(`news?limit=${limit}`);
   },
 
+  async getStockNews(ticker, limit = 5) {
+    return await externalApiCall(`news/stock/${ticker}?limit=${limit}`);
+  },
+
+  // User Management (WordPress native)
+  async getCurrentUser() {
+    const wpData = getWpApiData();
+    if (!wpData.isLoggedIn) {
+      return { success: false, error: 'Not logged in' };
+    }
+    return { success: true, data: wpData.currentUser };
+  },
+
+  async updateUserProfile(userData) {
+    const wpData = getWpApiData();
+    if (!wpData.isLoggedIn) {
+      return { success: false, error: 'Not logged in' };
+    }
+    
+    return await wpRestCall(`users/${wpData.currentUser.ID}`, {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+  },
+
+  // Authentication (these would typically redirect to WordPress login/register pages)
+  async loginUser(credentials) {
+    // Redirect to WordPress login
+    window.location.href = `${getWpApiData().homeUrl}wp-login.php`;
+    return { success: true };
+  },
+
+  async registerUser(userData) {
+    // Redirect to WordPress registration or custom signup page
+    window.location.href = `${getWpApiData().homeUrl}wp-login.php?action=register`;
+    return { success: true };
+  },
+
+  async logoutUser() {
+    // Redirect to WordPress logout
+    window.location.href = `${getWpApiData().homeUrl}wp-login.php?action=logout`;
+    return { success: true };
+  },
+
+  // Usage Statistics
   async getUsageStats() {
-    return { success: true, data: { requests_used: 5, requests_limit: 15 } };
+    return await wpApiCall('usage-stats');
   },
 
-  // Mock all other methods
-  async getFormattedWatchlistData() { return { success: true, data: [] }; },
-  async addToWatchlist(symbol) { return { success: true }; },
-  async removeFromWatchlist(symbol) { return { success: true }; },
-  async getFormattedPortfolioData() { return { success: true, data: [] }; },
-  async getStockNews(ticker, limit) { return { success: true, data: [] }; },
-  async createPayPalOrder(planId, amount) { return { success: true, order_id: 'mock_order' }; },
-  async capturePayPalOrder(orderId) { return { success: true }; },
-  async submitContactForm(data) { return { success: true }; },
-  async subscribeNewsletter(email) { return { success: true }; },
-  async registerUser(userData) { return { success: true }; },
-  async loginUser(credentials) { return { success: true }; },
-  async getSystemStatus() { return { success: true, status: 'operational' }; }
+  // PayPal Integration (proxy to external API)
+  async createPayPalOrder(planId, amount) {
+    return await externalApiCall('payments/paypal/create-order', {
+      method: 'POST',
+      body: JSON.stringify({ plan_id: planId, amount })
+    });
+  },
+
+  async capturePayPalOrder(orderId) {
+    return await externalApiCall('payments/paypal/capture-order', {
+      method: 'POST',
+      body: JSON.stringify({ order_id: orderId })
+    });
+  },
+
+  // Newsletter Subscription
+  async subscribeNewsletter(email) {
+    return await wpApiCall('newsletter/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+  }
 };
 
 // Utility hook for API calls with loading states
@@ -177,6 +298,34 @@ export const useAsyncWithRetry = (deps, asyncFunction, retryCount = 3) => {
   const retry = () => executeFunction();
   
   return { ...state, retry };
+};
+
+// WordPress-specific utilities
+export const wpUtils = {
+  isLoggedIn: () => getWpApiData().isLoggedIn,
+  getCurrentUser: () => getWpApiData().currentUser,
+  getHomeUrl: () => getWpApiData().homeUrl,
+  getSiteName: () => getWpApiData().siteName,
+  getSiteDescription: () => getWpApiData().siteDescription,
+  
+  // Generate WordPress URLs
+  getLoginUrl: () => `${getWpApiData().homeUrl}wp-login.php`,
+  getRegisterUrl: () => `${getWpApiData().homeUrl}wp-login.php?action=register`,
+  getLogoutUrl: () => `${getWpApiData().homeUrl}wp-login.php?action=logout&_wpnonce=${getWpApiData().nonce}`,
+  getAdminUrl: () => `${getWpApiData().homeUrl}wp-admin/`,
+  
+  // Handle WordPress redirects
+  redirectToLogin: () => {
+    window.location.href = wpUtils.getLoginUrl();
+  },
+  
+  redirectToRegister: () => {
+    window.location.href = wpUtils.getRegisterUrl();
+  },
+  
+  redirectToLogout: () => {
+    window.location.href = wpUtils.getLogoutUrl();
+  }
 };
 
 export default stockAPI;
