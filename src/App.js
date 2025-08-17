@@ -1,63 +1,53 @@
-import React from "react";
+import { useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
 
-// Import services
-import { stockAPI, useAsync } from "./services/api";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
-// Import core pages
-import Home from "./pages/Home.jsx";
-import PremiumPlans from "./pages/PremiumPlans.jsx";
-import ComparePlans from "./pages/ComparePlans.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-import MarketOverview from "./pages/MarketOverview.jsx";
-import Scanner from "./pages/Scanner.jsx";
-import Watchlist from "./pages/Watchlist.jsx";
-import Portfolio from "./pages/Portfolio.jsx";
-import News from "./pages/News.jsx";
-import Account from "./pages/Account.jsx";
-import Contact from "./pages/Contact.jsx";
-import Login from "./pages/Login.jsx";
-import Signup from "./pages/Signup.jsx";
-import NotFound from "./pages/NotFound.jsx";
+const Home = () => {
+  const helloWorldApi = async () => {
+    try {
+      const response = await axios.get(`${API}/`);
+      console.log(response.data.message);
+    } catch (e) {
+      console.error(e, `errored out requesting / api`);
+    }
+  };
+
+  useEffect(() => {
+    helloWorldApi();
+  }, []);
+
+  return (
+    <div>
+      <header className="App-header">
+        <a
+          className="App-link"
+          href="https://emergent.sh"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
+        </a>
+        <p className="mt-5">Building something incredible ~!</p>
+      </header>
+    </div>
+  );
+};
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="app-container">
+    <div className="App">
+      <BrowserRouter>
         <Routes>
-          {/* Main Application Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/market-overview" element={<MarketOverview />} />
-          <Route path="/scanner" element={<Scanner />} />
-          <Route path="/watchlist" element={<Watchlist />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/news" element={<News />} />
-
-          {/* Account & Settings */}
-          <Route path="/account" element={<Account />} />
-
-          {/* Premium & Billing */}
-          <Route path="/premium" element={<PremiumPlans />} />
-          <Route path="/plans" element={<PremiumPlans />} />
-          <Route path="/compare-plans" element={<ComparePlans />} />
-
-          {/* Authentication */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
-          {/* Support */}
-          <Route path="/contact" element={<Contact />} />
-
-          {/* Redirects */}
-          <Route path="/premium-plans" element={<Navigate to="/premium" replace />} />
-
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<Home />}>
+            <Route index element={<Home />} />
+          </Route>
         </Routes>
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </div>
   );
 }
 

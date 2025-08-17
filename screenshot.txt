@@ -1,2 +1,3 @@
-Retail Trade Scanner WordPress Theme Screenshot Placeholder
-This theme includes all essential WordPress files and functionality
+Theme Screenshot Placeholder
+Stock Scanner Pro WordPress Theme
+React-powered stock market analysis tool
