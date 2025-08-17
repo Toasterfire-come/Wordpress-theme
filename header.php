@@ -10,6 +10,7 @@
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class('no-sidebar'); ?>>
+	<?php wp_body_open(); ?>
 	<div class="app-container">
 		<div class="main-content-area">
 			<header class="site-header">
