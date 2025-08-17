@@ -117,7 +117,7 @@ const Contact = () => {
     },
     {
       question: "What markets and exchanges do you cover?",
-      answer: "We provide real-time data from 50+ global exchanges including NYSE, NASDAQ, LSE, TSE, and major European and Asian markets. Our coverage includes stocks, ETFs, options, and indices."
+      answer: "nyse"
     },
     {
       question: "Is my financial data secure?",
