@@ -16,17 +16,16 @@
                                 <span>📊</span>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0;"><?php bloginfo('name'); ?></h3>
+                                <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0;">Retail Trade Scanner</h3>
                                 <p style="font-size: 0.875rem; color: #94a3b8; margin: 0;">Professional Trading Platform</p>
                             </div>
                         </a>
                         <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem;">
-                            Professional-grade stock analysis platform with real-time data updates sub three minutes. 
+                            Professional-grade stock analysis platform with real-time data updates every 3 minutes. 
                             Built for traders who demand accuracy and performance.
                         </p>
                         <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: #94a3b8;">
-                            <span>📞 +1 (555) 123-4567</span>
-                            <span>✉️ support@stockscannerpro.com</span>
+                            <span>🌐 retailtradescanner.com</span>
                         </div>
                     </div>
 
@@ -99,7 +98,7 @@
                 <div style="border-top: 1px solid #334155; padding-top: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <div style="text-align: center; color: #64748b; font-size: 0.875rem;">
-                            <p style="margin: 0;">© <?php echo date('Y'); ?> Stock Scanner Pro. All rights reserved.</p>
+                            <p style="margin: 0;">© <?php echo date('Y'); ?> Retail Trade Scanner. All rights reserved.</p>
                         </div>
                         <div style="display: flex; gap: 2rem; font-size: 0.875rem;">
                             <a href="<?php echo esc_url(get_permalink(get_page_by_path('terms'))); ?>" 
