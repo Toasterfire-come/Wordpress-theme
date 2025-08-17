@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  TrendingUp, 
   Search, 
   Bell, 
   Settings, 
@@ -49,9 +48,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-all duration-300">
-                <TrendingUp className="h-7 w-7 text-white" />
-              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-all duration-300"></div>
               <div className="hidden sm:block">
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Stock Scanner Pro
@@ -298,9 +295,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center">
-                <TrendingUp className="h-7 w-7 text-white" />
-              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center"></div>
               <div>
                 <h3 className="text-xl font-bold text-white">Stock Scanner Pro</h3>
                 <p className="text-sm text-slate-400">Professional Trading Platform</p>
