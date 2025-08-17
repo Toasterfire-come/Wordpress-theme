@@ -8,10 +8,22 @@ if (!defined('ABSPATH')) { exit; }
 // Enqueue styles and scripts
 add_action('wp_enqueue_scripts', function() {
 	$theme_version = '1.0.0';
-	wp_enqueue_style('stockscan-style', get_stylesheet_uri(), [], $theme_version);
+	$react_css_path = get_template_directory() . '/js/app.css';
+	$react_css_uri  = get_template_directory_uri() . '/js/app.css';
+	if (file_exists($react_css_path)) {
+		wp_enqueue_style('react-app-style', $react_css_uri, [], $theme_version);
+	} else {
+		wp_enqueue_style('stockscan-style', get_stylesheet_uri(), [], $theme_version);
+	}
 
 	// Main script (load in header so inline templates can use localized data)
 	wp_enqueue_script('stockscan-main', get_template_directory_uri() . '/js/main.js', ['jquery'], $theme_version, false);
+
+	// Enqueue React app bundle if present (built asset placed in theme's js/ directory)
+	$react_js_path = get_template_directory() . '/js/app.js';
+	if (file_exists($react_js_path)) {
+		wp_enqueue_script('react-app', get_template_directory_uri() . '/js/app.js', [], $theme_version, true);
+	}
 
 	// Localize ajax and nonce
 	wp_localize_script('stockscan-main', 'StockScan', [
@@ -368,19 +380,19 @@ function stockscan_output_seo_meta() {
 	$noindex_slugs = [ 'login', 'signup', 'paypal-checkout', 'payment-success', 'payment-cancelled' ];
 	if (is_singular() && $post && in_array($post->post_name, $noindex_slugs, true)) { $robots = 'noindex, nofollow'; }
 	echo "\n\t<!-- StockScan Pro basic SEO -->\n";
-	echo '\t<meta name="robots" content="' . esc_attr($robots) . '" />' . "\n";
-	echo '\t<link rel="canonical" href="' . esc_url($url) . '" />' . "\n";
-	echo '\t<meta name="description" content="' . esc_attr($desc) . '" />' . "\n";
-	echo '\t<meta property="og:title" content="' . esc_attr($title) . '" />' . "\n";
-	echo '\t<meta property="og:description" content="' . esc_attr($desc) . '" />' . "\n";
-	echo '\t<meta property="og:type" content="' . (is_front_page() ? 'website' : 'article') . '" />' . "\n";
-	echo '\t<meta property="og:url" content="' . esc_url($url) . '" />' . "\n";
-	echo '\t<meta property="og:site_name" content="' . esc_attr($site) . '" />' . "\n";
-	echo '\t<meta property="og:image" content="' . esc_url($icon) . '" />' . "\n";
-	echo '\t<meta name="twitter:card" content="summary_large_image" />' . "\n";
-	echo '\t<meta name="twitter:title" content="' . esc_attr($title) . '" />' . "\n";
-	echo '\t<meta name="twitter:description" content="' . esc_attr($desc) . '" />' . "\n";
-	echo '\t<meta name="twitter:image" content="' . esc_url($icon) . '" />' . "\n";
+	echo '<meta name="robots" content="' . esc_attr($robots) . '" />' . "\n";
+	echo '<link rel="canonical" href="' . esc_url($url) . '" />' . "\n";
+	echo '<meta name="description" content="' . esc_attr($desc) . '" />' . "\n";
+	echo '<meta property="og:title" content="' . esc_attr($title) . '" />' . "\n";
+	echo '<meta property="og:description" content="' . esc_attr($desc) . '" />' . "\n";
+	echo '<meta property="og:type" content="' . (is_front_page() ? 'website' : 'article') . '" />' . "\n";
+	echo '<meta property="og:url" content="' . esc_url($url) . '" />' . "\n";
+	echo '<meta property="og:site_name" content="' . esc_attr($site) . '" />' . "\n";
+	echo '<meta property="og:image" content="' . esc_url($icon) . '" />' . "\n";
+	echo '<meta name="twitter:card" content="summary_large_image" />' . "\n";
+	echo '<meta name="twitter:title" content="' . esc_attr($title) . '" />' . "\n";
+	echo '<meta name="twitter:description" content="' . esc_attr($desc) . '" />' . "\n";
+	echo '<meta name="twitter:image" content="' . esc_url($icon) . '" />' . "\n";
 	// JSON-LD
 	$org = [
 		'@context' => 'https://schema.org',
@@ -399,7 +411,7 @@ function stockscan_output_seo_meta() {
 			'query-input' => 'required name=search_term_string',
 		],
 	];
-	echo '\t<script type="application/ld+json">' . wp_json_encode($org) . '</script>' . "\n";
-	echo '\t<script type="application/ld+json">' . wp_json_encode($website) . '</script>' . "\n";
+	echo '<script type="application/ld+json">' . wp_json_encode($org) . '</script>' . "\n";
+	echo '<script type="application/ld+json">' . wp_json_encode($website) . '</script>' . "\n";
 }
 add_action('wp_head', 'stockscan_output_seo_meta', 5);
