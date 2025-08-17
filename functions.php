@@ -42,24 +42,23 @@ function retail_trade_scanner_scripts() {
     // Enqueue theme stylesheet
     wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '1.0.0');
     
-    // Enqueue React build files (if built)
-    $react_build_path = get_template_directory() . '/build/static/js/';
-    if (is_dir($react_build_path)) {
-        $js_files = glob($react_build_path . 'main.*.js');
-        $css_files = glob(get_template_directory() . '/build/static/css/main.*.css');
+    // Enqueue React build files from assets directory
+    $react_js_path = get_template_directory() . '/assets/js/';
+    $react_css_path = get_template_directory() . '/assets/css/';
+    
+    if (is_dir($react_js_path)) {
+        $js_files = glob($react_js_path . 'main.*.js');
+        $css_files = glob($react_css_path . 'main.*.css');
         
         if (!empty($js_files)) {
             $js_file = basename($js_files[0]);
-            wp_enqueue_script('retail-trade-scanner-react', get_template_directory_uri() . '/build/static/js/' . $js_file, array(), '1.0.0', true);
+            wp_enqueue_script('retail-trade-scanner-react', get_template_directory_uri() . '/assets/js/' . $js_file, array(), '1.0.0', true);
         }
         
         if (!empty($css_files)) {
             $css_file = basename($css_files[0]);
-            wp_enqueue_style('retail-trade-scanner-react-css', get_template_directory_uri() . '/build/static/css/' . $css_file, array(), '1.0.0');
+            wp_enqueue_style('retail-trade-scanner-react-css', get_template_directory_uri() . '/assets/css/' . $css_file, array(), '1.0.0');
         }
-    } else {
-        // Development mode - enqueue development React
-        wp_enqueue_script('retail-trade-scanner-react-dev', 'http://localhost:3000/static/js/bundle.js', array(), '1.0.0', true);
     }
     
     // Enqueue custom JavaScript
