@@ -1,6 +1,6 @@
 <?php
 /**
- * Retail Trade Scanner Theme Functions - Updated Version with PayPal Integration
+ * Retail Trade Scanner Theme Functions - Bug-Fixed & Integration-Ready Version
  */
 
 // Prevent direct access
@@ -36,138 +36,399 @@ function retail_trade_scanner_setup() {
 add_action('after_setup_theme', 'retail_trade_scanner_setup');
 
 /**
- * Enqueue scripts and styles
+ * Check if stock scanner plugin is active
+ */
+function retail_trade_scanner_plugin_check() {
+    // Check for plugin class or function
+    if (!class_exists('StockScannerIntegration') && !function_exists('create_stock_scanner_pages')) {
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-warning is-dismissible">
+                <p><strong>Retail Trade Scanner Theme:</strong> The Stock Scanner Integration plugin is required for full functionality. Please install and activate the plugin.</p>
+            </div>';
+        });
+    }
+}
+add_action('admin_init', 'retail_trade_scanner_plugin_check');
+
+/**
+ * Enqueue scripts and styles - Bug Fixed Version
  */
 function retail_trade_scanner_scripts() {
     // Enqueue theme stylesheet
-    wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '2.0.0');
+    wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '2.1.0');
     
-    // Enqueue PayPal SDK
-    wp_enqueue_script('paypal-sdk', 'https://www.paypal.com/sdk/js?client-id=' . get_option('retail_trade_scanner_paypal_client_id', ''), array(), '2.0.0', true);
+    // Check if plugin is active before enqueueing PayPal SDK
+    if (get_option('stock_scanner_api_url') || get_option('retail_trade_scanner_paypal_client_id')) {
+        // Get PayPal Client ID from plugin or theme options
+        $paypal_client_id = get_option('paypal_client_id', get_option('retail_trade_scanner_paypal_client_id', ''));
+        
+        if ($paypal_client_id) {
+            wp_enqueue_script('paypal-sdk', 'https://www.paypal.com/sdk/js?client-id=' . $paypal_client_id, array(), '2.1.0', true);
+        }
+    }
     
     // Enqueue custom JavaScript
-    wp_enqueue_script('retail-trade-scanner-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery', 'paypal-sdk'), '2.0.0', true);
+    wp_enqueue_script('retail-trade-scanner-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '2.1.0', true);
     
-    // Localize script for AJAX and REST API
+    // Get backend URL from plugin first, then theme options
+    $backend_url = get_option('stock_scanner_api_url', 
+                   get_option('retail_trade_scanner_api_endpoint',
+                   defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api/'));
+    
+    // Localize script for AJAX and REST API - Compatible with Plugin
     wp_localize_script('retail-trade-scanner-script', 'retail_trade_scanner_data', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'rest_url' => rest_url('retail-trade-scanner/v1/'),
         'nonce' => wp_create_nonce('retail_trade_scanner_nonce'),
-        'backend_url' => defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api',
-        'paypal_client_id' => get_option('retail_trade_scanner_paypal_client_id', ''),
+        'backend_url' => rtrim($backend_url, '/'),
+        'paypal_client_id' => $paypal_client_id,
         'api_endpoints' => array(
-            'stocks' => rest_url('retail-trade-scanner/v1/stocks/'),
-            'market_data' => rest_url('retail-trade-scanner/v1/market-data/'),
-            'portfolio' => rest_url('retail-trade-scanner/v1/portfolio/'),
-            'watchlist' => rest_url('retail-trade-scanner/v1/watchlist/'),
-            'news' => rest_url('retail-trade-scanner/v1/news/'),
-            'user' => rest_url('retail-trade-scanner/v1/user/'),
-            'billing' => rest_url('retail-trade-scanner/v1/billing/'),
+            'stocks' => rest_url('retail-trade-scanner/v1/proxy/stocks/'),
+            'market_data' => rest_url('retail-trade-scanner/v1/proxy/market-data/'),
+            'portfolio' => rest_url('retail-trade-scanner/v1/proxy/portfolio/'),
+            'watchlist' => rest_url('retail-trade-scanner/v1/proxy/watchlist/'),
+            'news' => rest_url('retail-trade-scanner/v1/proxy/news/'),
+            'user' => rest_url('retail-trade-scanner/v1/proxy/user/'),
+            'billing' => rest_url('retail-trade-scanner/v1/proxy/billing/'),
             'paypal' => rest_url('retail-trade-scanner/v1/paypal/'),
         ),
+        'plugin_active' => class_exists('StockScannerIntegration')
     ));
+
+    // Add stock scanner AJAX if plugin is active
+    if (class_exists('StockScannerIntegration')) {
+        wp_localize_script('retail-trade-scanner-script', 'stock_scanner_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('stock_scanner_nonce')
+        ));
+    }
 }
 add_action('wp_enqueue_scripts', 'retail_trade_scanner_scripts');
 
 /**
- * Create required pages on theme activation
+ * Create required pages on theme activation - Plugin Compatible
  */
 function retail_trade_scanner_create_pages() {
     $pages = array(
-        'home' => array(
-            'title' => 'Home',
-            'content' => 'Welcome to Retail Trade Scanner - Professional stock analysis and portfolio management platform.',
-            'template' => 'page-home.php'
-        ),
-        'dashboard' => array(
-            'title' => 'Dashboard',
-            'content' => 'Your personalized trading dashboard with portfolio overview and market insights.',
-            'template' => 'page-dashboard.php'
-        ),
-        'market-overview' => array(
-            'title' => 'Market Overview',
-            'content' => 'Real-time market data, major indices, top gainers and losers.',
-            'template' => 'page-market-overview.php'
-        ),
-        'scanner' => array(
-            'title' => 'Stock Scanner',
-            'content' => 'Advanced stock screening and filtering tools.',
-            'template' => 'page-scanner.php'
-        ),
-        'watchlist' => array(
-            'title' => 'Watchlist',
-            'content' => 'Create and manage your stock watchlists with real-time updates.',
-            'template' => 'page-watchlist.php'
-        ),
-        'portfolio' => array(
-            'title' => 'Portfolio',
-            'content' => 'Track your investment portfolio performance and analytics.',
-            'template' => 'page-portfolio.php'
-        ),
-        'news' => array(
-            'title' => 'Market News',
-            'content' => 'Latest market news with sentiment analysis and personalized feeds.',
-            'template' => 'page-news.php'
-        ),
-        'account' => array(
-            'title' => 'My Account',
-            'content' => 'Manage your account settings, billing, and preferences.',
-            'template' => 'page-account.php'
-        ),
-        'notifications' => array(
-            'title' => 'Email Notifications',
-            'content' => 'Manage your email notification preferences and settings.',
-            'template' => 'page-notifications.php'
-        ),
-        'billing-history' => array(
-            'title' => 'Billing History',
-            'content' => 'View your billing history and download invoices.',
-            'template' => 'page-billing-history.php'
-        ),
         'premium-plans' => array(
             'title' => 'Premium Plans',
-            'content' => 'Choose your trading plan. From casual lookup users to professional trading firms.',
+            'content' => '[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]
+
+<div class="pricing-section">
+<h2>Choose Your Trading Plan</h2>
+<p>From casual lookup users to professional trading firms. Find the plan that fits your needs.</p>
+
+<div class="pricing-grid">
+<!-- FREE PLAN -->
+<div class="pricing-card free-plan">
+<h3>🆓 Free Plan</h3>
+<div class="price">$0<span>/month</span></div>
+<ul class="feature-list">
+<li>✅ 15 stocks per month</li>
+<li>✅ Basic stock lookup</li>
+<li>✅ 5 email list subscriptions</li>
+<li>✅ Market news access</li>
+<li>✅ Community support</li>
+</ul>
+<a href="/wp-login.php?action=register" class="btn btn-outline">Get Started Free</a>
+</div>
+
+<!-- BRONZE PLAN - Aligned with Plugin -->
+<div class="pricing-card bronze-plan popular">
+<div class="popular-badge">Most Popular</div>
+<h3>🥉 Bronze Plan</h3>
+<div class="price">$14.99<span>/month</span></div>
+<ul class="feature-list">
+<li>✅ 1,000 stocks per month</li>
+<li>✅ Advanced stock lookup</li>
+<li>✅ Email alerts & notifications</li>
+<li>✅ News sentiment analysis</li>
+<li>✅ Basic portfolio tracking</li>
+</ul>
+<div id="bronze-payment-button" class="payment-button-container">
+<button class="btn btn-primary upgrade-btn" data-level="2" data-price="14.99">Upgrade to Bronze</button>
+</div>
+</div>
+
+<!-- SILVER PLAN - Aligned with Plugin -->
+<div class="pricing-card silver-plan">
+<h3>🥈 Silver Plan</h3>
+<div class="price">$29.99<span>/month</span></div>
+<ul class="feature-list">
+<li>✅ 5,000 stocks per month</li>
+<li>✅ Advanced filtering & screening</li>
+<li>✅ 1-year historical data</li>
+<li>✅ Custom watchlists (10)</li>
+<li>✅ Priority email support</li>
+</ul>
+<div id="silver-payment-button" class="payment-button-container">
+<button class="btn btn-primary upgrade-btn" data-level="3" data-price="29.99">Upgrade to Silver</button>
+</div>
+</div>
+
+<!-- GOLD PLAN - Aligned with Plugin -->
+<div class="pricing-card gold-plan">
+<h3>🏆 Gold Plan</h3>
+<div class="price">$59.99<span>/month</span></div>
+<ul class="feature-list">
+<li>✅ 10,000 stocks per month</li>
+<li>✅ All premium features</li>
+<li>✅ Real-time alerts</li>
+<li>✅ API access</li>
+<li>✅ 5-year historical data</li>
+<li>✅ Priority phone support</li>
+</ul>
+<div id="gold-payment-button" class="payment-button-container">
+<button class="btn btn-primary upgrade-btn" data-level="4" data-price="59.99">Upgrade to Gold</button>
+</div>
+</div>
+</div>
+
+<h3>📊 Live Stock Analysis</h3>
+[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]
+[stock_scanner symbol="GOOGL" show_chart="true" show_details="true"]
+</div>',
             'template' => 'page-premium-plans.php'
         ),
-        'contact' => array(
-            'title' => 'Contact Us',
-            'content' => 'Get in touch with our support team for assistance.',
-            'template' => 'page-contact.php'
+        'email-stock-lists' => array(
+            'title' => 'Email Stock Lists',
+            'content' => '<p>Our email stock lists will keep you informed and up to date on the changing market.</p>
+
+[stock_scanner symbol="TSLA" show_details="true"]
+[stock_scanner symbol="NVDA" show_details="true"]
+
+<h5>Frequently asked questions</h5>
+<details>
+<summary>Why am I not able to access all of the stock lists?</summary>
+<p>If you are subscribed to the bronze or silver plan, you may have limited access. Upgrade your plan for full access.</p>
+</details>',
+            'template' => 'page-email-stock-lists.php'
         ),
-        'signup' => array(
-            'title' => 'Sign Up',
-            'content' => 'Create your Retail Trade Scanner account and start trading.',
-            'template' => 'page-signup.php'
+        'all-stock-lists' => array(
+            'title' => 'All Stock Alerts', 
+            'content' => '<h2>Complete Stock Alert Lists</h2>
+
+[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]
+[stock_scanner symbol="GOOGL" show_chart="true" show_details="true"]
+[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]
+
+<div class="upgrade-notice">
+<h4>🚀 Upgrade for Full Access</h4>
+<p>Get unlimited access to all stock lists with our premium plans!</p>
+<a href="/premium-plans/" class="btn btn-primary">View Premium Plans</a>
+</div>',
+            'template' => 'page-all-stock-lists.php'
+        ),
+        'popular-stock-lists' => array(
+            'title' => 'Popular Stock Lists',
+            'content' => '<h2>Most Popular Stock Lists</h2>
+
+[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]
+[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]
+[stock_scanner symbol="GOOGL" show_chart="true" show_details="true"]
+
+<p style="text-align: center; margin: 30px 0;">
+<a href="/email-stock-lists/" class="btn btn-primary">Browse All Lists</a>
+</p>',
+            'template' => 'page-popular-stock-lists.php'
+        ),
+        'stock-search' => array(
+            'title' => 'Stock Search',
+            'content' => '<h2>Advanced Stock Search</h2>
+
+[stock_scanner symbol="SPY" show_chart="true" show_details="true"]
+[stock_scanner symbol="QQQ" show_chart="true" show_details="true"]
+
+<div class="pro-search-notice">
+<h4>🎯 Pro Search Features</h4>
+<ul>
+<li>Advanced filtering options</li>
+<li>Technical indicator screening</li>
+<li>Custom alerts setup</li>
+</ul>
+<a href="/premium-plans/">Upgrade to unlock advanced search features</a>
+</div>',
+            'template' => 'page-stock-search.php'
+        ),
+        'personalized-stock-finder' => array(
+            'title' => 'Personalized Stock Finder',
+            'content' => '<h2>Your Personalized Stock Finder</h2>
+
+[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]
+[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]
+
+<div class="personalized-upgrade">
+<h4>🚀 Get Personalized Recommendations</h4>
+<p>Our AI analyzes your preferences and market conditions to suggest the best stocks for your portfolio.</p>
+<a href="/premium-plans/" class="btn btn-primary">Start Your Analysis</a>
+</div>',
+            'template' => 'page-personalized-stock-finder.php'
+        ),
+        'news-scrapper' => array(
+            'title' => 'News Scrapper',
+            'content' => '<h2>Financial News Scraper</h2>
+
+[stock_scanner symbol="SPY" show_chart="true" show_details="true"]
+[stock_scanner symbol="QQQ" show_chart="true" show_details="true"]
+
+<div class="news-features">
+<h4>📊 Real-Time Updates</h4>
+<p>Our news scraper monitors hundreds of financial news sources to bring you the most relevant information.</p>
+</div>',
+            'template' => 'page-news-scrapper.php'
+        ),
+        'filter-and-scrapper-pages' => array(
+            'title' => 'Filter and Scrapper Pages',
+            'content' => '<h2>Advanced Filtering & Data Scraping</h2>
+
+[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]
+[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]
+
+<div class="filtering-tools">
+<h4>📈 Technical Filters</h4>
+<ul>
+<li>Price movements</li>
+<li>Volume analysis</li>
+<li>RSI indicators</li>
+<li>Moving averages</li>
+</ul>
+</div>',
+            'template' => 'page-filter-and-scrapper-pages.php'
+        ),
+        'membership-account' => array(
+            'title' => 'Membership Account',
+            'content' => '<h2>Your Membership Account</h2>
+
+[stock_scanner symbol="AAPL" show_details="true"]
+
+<div class="account-overview">
+<h4>Current Plan</h4>
+<p>Your current membership level and benefits will be displayed here.</p>
+</div>',
+            'template' => 'page-membership-account.php'
+        ),
+        'membership-billing' => array(
+            'title' => 'Membership Billing',
+            'content' => '<h2>Billing Information</h2>
+
+[stock_scanner symbol="MSFT" show_details="true"]
+
+<div class="billing-info">
+<h4>💳 Payment Methods</h4>
+<p>View your billing history and manage payment methods.</p>
+</div>',
+            'template' => 'page-membership-billing.php'
+        ),
+        'membership-cancel' => array(
+            'title' => 'Membership Cancel',
+            'content' => '<h2>Cancel Membership</h2>
+
+[stock_scanner symbol="TSLA" show_details="true"]
+
+<div class="cancel-info">
+<p>We\'re sorry to see you go. Cancel your membership here.</p>
+</div>',
+            'template' => 'page-membership-cancel.php'
+        ),
+        'membership-checkout' => array(
+            'title' => 'Membership Checkout',  
+            'content' => '<h2>Membership Checkout</h2>
+
+[stock_scanner symbol="GOOGL" show_details="true"]
+
+<div class="checkout-info">
+<p>Complete your subscription purchase.</p>
+</div>',
+            'template' => 'page-membership-checkout.php'
+        ),
+        'membership-confirmation' => array(
+            'title' => 'Membership Confirmation',
+            'content' => '<h2>Membership Confirmation</h2>
+
+[stock_scanner symbol="NVDA" show_details="true"]
+
+<div class="confirmation-info">
+<h4>🎉 Welcome</h4>
+<p>Thank you for your purchase! Your membership is now active.</p>
+</div>',
+            'template' => 'page-membership-confirmation.php'
+        ),
+        'membership-orders' => array(
+            'title' => 'Membership Orders',
+            'content' => '<h2>Your Orders</h2>
+
+[stock_scanner symbol="AMZN" show_details="true"]
+
+<div class="orders-info">
+<h4>📦 Order History</h4>
+<p>View your order history and transaction details.</p>
+</div>',
+            'template' => 'page-membership-orders.php'
+        ),
+        'membership-levels' => array(
+            'title' => 'Membership Levels',
+            'content' => '<h2>Membership Levels</h2>
+
+[stock_scanner symbol="SPY" show_details="true"]
+
+<div class="levels-info">
+<h4>🏆 Available Plans</h4>
+<p><a href="/premium-plans/">View detailed pricing</a></p>
+</div>',
+            'template' => 'page-membership-levels.php'
         ),
         'login' => array(
-            'title' => 'Login',
-            'content' => 'Access your Retail Trade Scanner account.',
+            'title' => 'Log In',
+            'content' => '<h2>Member Login</h2>
+
+[stock_scanner symbol="AAPL" show_details="true"]
+
+<div class="login-info">
+<h4>🔐 Secure Access</h4>
+<p>Sign in to access your account and premium features.</p>
+<p><a href="/wp-login.php">WordPress Login</a></p>
+</div>',
             'template' => 'page-login.php'
         ),
-        'terms' => array(
-            'title' => 'Terms of Service',
-            'content' => 'Terms and conditions for using Retail Trade Scanner services.',
+        'your-profile' => array(
+            'title' => 'Your Profile', 
+            'content' => '<h2>User Profile</h2>
+
+[stock_scanner symbol="MSFT" show_details="true"]
+
+<div class="profile-info">
+<h4>👤 Profile Settings</h4>
+<p>Manage your personal information and preferences.</p>
+</div>',
+            'template' => 'page-your-profile.php'
+        ),
+        'terms-and-conditions' => array(
+            'title' => 'Terms and Conditions',
+            'content' => '<h2>Terms and Conditions</h2>
+<p><strong>Last updated:</strong> January 21, 2025</p>
+
+[stock_scanner symbol="SPY" show_details="true"]
+
+<h3>1. Acceptance of Terms</h3>
+<p>By accessing and using Retail Trade Scanner, you accept and agree to be bound by the terms and provision of this agreement.</p>
+
+<h3>2. Investment Disclaimer</h3>
+<p><strong>Important:</strong> All content is for educational purposes only. Past performance does not guarantee future results. Trading involves risk of loss.</p>',
             'template' => 'page-terms.php'
         ),
-        'privacy' => array(
+        'privacy-policy' => array(
             'title' => 'Privacy Policy',
-            'content' => 'Our commitment to protecting your privacy and data.',
+            'content' => '<h2>Privacy Policy</h2>
+<p><strong>Last updated:</strong> January 21, 2025</p>
+
+[stock_scanner symbol="AAPL" show_details="true"]
+
+<h3>1. Information We Collect</h3>
+<p>We collect information you provide directly to us, such as when you create an account, subscribe to our services, or contact us.</p>
+
+<h3>2. Data Security</h3>
+<p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>',
             'template' => 'page-privacy.php'
-        ),
-        'about' => array(
-            'title' => 'About Us',
-            'content' => 'Learn more about Retail Trade Scanner and our mission.',
-            'template' => 'page-about.php'
-        ),
-        'faq' => array(
-            'title' => 'FAQ',
-            'content' => 'Frequently asked questions about our platform and services.',
-            'template' => 'page-faq.php'
-        ),
-        'status' => array(
-            'title' => 'System Status',
-            'content' => 'Real-time system status and performance metrics.',
-            'template' => 'page-status.php'
         )
     );
 
@@ -190,12 +451,6 @@ function retail_trade_scanner_create_pages() {
             
             if ($page_id && isset($page_data['template'])) {
                 update_post_meta($page_id, '_wp_page_template', $page_data['template']);
-            }
-            
-            // Set front page
-            if ($slug === 'home') {
-                update_option('show_on_front', 'page');
-                update_option('page_on_front', $page_id);
             }
         }
     }
@@ -223,6 +478,11 @@ function retail_trade_scanner_body_classes($classes) {
         $classes[] = 'page-template-' . sanitize_html_class(str_replace('.php', '', $template));
     }
     
+    // Add plugin status class
+    if (class_exists('StockScannerIntegration')) {
+        $classes[] = 'stock-scanner-plugin-active';
+    }
+    
     return $classes;
 }
 add_filter('body_class', 'retail_trade_scanner_body_classes');
@@ -244,273 +504,7 @@ function retail_trade_scanner_widgets_init() {
 add_action('widgets_init', 'retail_trade_scanner_widgets_init');
 
 /**
- * REST API Endpoints for external backend integration
- */
-function retail_trade_scanner_register_rest_routes() {
-    // Existing proxy route
-    register_rest_route('retail-trade-scanner/v1', '/proxy/(?P<endpoint>.*)', array(
-        'methods' => array('GET', 'POST', 'PUT', 'DELETE'),
-        'callback' => 'retail_trade_scanner_api_proxy',
-        'permission_callback' => '__return_true',
-    ));
-    
-    // PayPal routes
-    register_rest_route('retail-trade-scanner/v1', '/paypal/create-order', array(
-        'methods' => 'POST',
-        'callback' => 'retail_trade_scanner_create_paypal_order',
-        'permission_callback' => function() {
-            return is_user_logged_in();
-        },
-    ));
-    
-    register_rest_route('retail-trade-scanner/v1', '/paypal/capture-order/(?P<order_id>[^/]+)', array(
-        'methods' => 'POST',
-        'callback' => 'retail_trade_scanner_capture_paypal_order',
-        'permission_callback' => function() {
-            return is_user_logged_in();
-        },
-    ));
-    
-    register_rest_route('retail-trade-scanner/v1', '/paypal/webhook', array(
-        'methods' => 'POST',
-        'callback' => 'retail_trade_scanner_paypal_webhook',
-        'permission_callback' => '__return_true',
-    ));
-}
-add_action('rest_api_init', 'retail_trade_scanner_register_rest_routes');
-
-/**
- * API Proxy to external backend
- */
-function retail_trade_scanner_api_proxy($request) {
-    $endpoint = $request->get_param('endpoint');
-    $method = $request->get_method();
-    $params = $request->get_params();
-    
-    // Get backend URL from options or environment - Updated to use api.retailtradescanner.com
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
-    
-    $api_url = trailingslashit($backend_url) . $endpoint;
-    
-    $args = array(
-        'method' => $method,
-        'timeout' => 30,
-        'headers' => array(
-            'Content-Type' => 'application/json',
-        ),
-    );
-    
-    // Add authorization header if user is logged in
-    if (is_user_logged_in()) {
-        $user_id = get_current_user_id();
-        $args['headers']['Authorization'] = 'Bearer ' . get_user_meta($user_id, 'api_token', true);
-    }
-    
-    if (in_array($method, array('POST', 'PUT', 'PATCH')) && !empty($params)) {
-        $args['body'] = json_encode($params);
-    } elseif ($method === 'GET' && !empty($params)) {
-        $api_url = add_query_arg($params, $api_url);
-    }
-    
-    $response = wp_remote_request($api_url, $args);
-    
-    if (is_wp_error($response)) {
-        return new WP_Error('api_error', $response->get_error_message(), array('status' => 500));
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $status_code = wp_remote_retrieve_response_code($response);
-    
-    $data = json_decode($body, true);
-    
-    return new WP_REST_Response($data, $status_code);
-}
-
-/**
- * PayPal Create Order
- */
-function retail_trade_scanner_create_paypal_order($request) {
-    $plan_type = $request->get_param('plan_type');
-    $amount = $request->get_param('amount');
-    
-    $plan_amounts = array(
-        'basic' => '24.99',
-        'pro' => '49.99'
-    );
-    
-    if (!isset($plan_amounts[$plan_type])) {
-        return new WP_Error('invalid_plan', 'Invalid plan type', array('status' => 400));
-    }
-    
-    $amount = $plan_amounts[$plan_type];
-    $user_id = get_current_user_id();
-    
-    // Forward to backend API
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
-    $api_url = trailingslashit($backend_url) . 'paypal/create-order';
-    
-    $args = array(
-        'method' => 'POST',
-        'timeout' => 30,
-        'headers' => array(
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . get_user_meta($user_id, 'api_token', true)
-        ),
-        'body' => json_encode(array(
-            'plan_type' => $plan_type,
-            'amount' => $amount,
-            'user_id' => $user_id,
-            'user_email' => wp_get_current_user()->user_email
-        ))
-    );
-    
-    $response = wp_remote_post($api_url, $args);
-    
-    if (is_wp_error($response)) {
-        return new WP_Error('paypal_error', $response->get_error_message(), array('status' => 500));
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-    
-    return new WP_REST_Response($data, wp_remote_retrieve_response_code($response));
-}
-
-/**
- * PayPal Capture Order
- */
-function retail_trade_scanner_capture_paypal_order($request) {
-    $order_id = $request->get_param('order_id');
-    $user_id = get_current_user_id();
-    
-    // Forward to backend API
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
-    $api_url = trailingslashit($backend_url) . 'paypal/capture-order/' . $order_id;
-    
-    $args = array(
-        'method' => 'POST',
-        'timeout' => 30,
-        'headers' => array(
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . get_user_meta($user_id, 'api_token', true)
-        ),
-        'body' => json_encode(array(
-            'user_id' => $user_id
-        ))
-    );
-    
-    $response = wp_remote_post($api_url, $args);
-    
-    if (is_wp_error($response)) {
-        return new WP_Error('paypal_error', $response->get_error_message(), array('status' => 500));
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-    
-    return new WP_REST_Response($data, wp_remote_retrieve_response_code($response));
-}
-
-/**
- * PayPal Webhook Handler
- */
-function retail_trade_scanner_paypal_webhook($request) {
-    // Forward to backend API for processing
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
-    $api_url = trailingslashit($backend_url) . 'paypal/webhook';
-    
-    $args = array(
-        'method' => 'POST',
-        'timeout' => 30,
-        'headers' => array(
-            'Content-Type' => 'application/json'
-        ),
-        'body' => $request->get_body()
-    );
-    
-    $response = wp_remote_post($api_url, $args);
-    
-    return new WP_REST_Response(array('status' => 'processed'), 200);
-}
-
-/**
- * AJAX Handlers for backward compatibility
- */
-function retail_trade_scanner_ajax_handler() {
-    check_ajax_referer('retail_trade_scanner_nonce', 'nonce');
-    
-    $action_map = array(
-        'stock_scanner_get_quote' => 'stocks/quote',
-        'get_major_indices' => 'market-data/indices',
-        'get_market_movers' => 'market-data/movers',
-        'add_to_watchlist' => 'watchlist/add',
-        'remove_from_watchlist' => 'watchlist/remove',
-        'get_usage_stats' => 'user/stats',
-        'get_formatted_portfolio_data' => 'portfolio/summary',
-        'get_formatted_watchlist_data' => 'watchlist/data',
-        'update_user_account' => 'user/profile',
-        'update_user_settings' => 'user/settings',
-        'change_password' => 'user/change-password',
-        'update_payment_method' => 'billing/payment-method',
-        'get_billing_history' => 'billing/history',
-        'update_notification_settings' => 'user/notifications',
-    );
-    
-    $ajax_action = sanitize_text_field($_POST['ajax_action']);
-    
-    if (!isset($action_map[$ajax_action])) {
-        wp_send_json_error('Invalid action');
-        return;
-    }
-    
-    $backend_endpoint = $action_map[$ajax_action];
-    $data = array_map('sanitize_text_field', $_POST);
-    
-    // Proxy to external API
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
-    $api_url = trailingslashit($backend_url) . $backend_endpoint;
-    
-    $args = array(
-        'body' => json_encode($data),
-        'headers' => array('Content-Type' => 'application/json'),
-        'timeout' => 30,
-    );
-    
-    // Add authorization header if user is logged in
-    if (is_user_logged_in()) {
-        $user_id = get_current_user_id();
-        $args['headers']['Authorization'] = 'Bearer ' . get_user_meta($user_id, 'api_token', true);
-    }
-    
-    $response = wp_remote_post($api_url, $args);
-    
-    if (is_wp_error($response)) {
-        wp_send_json_error($response->get_error_message());
-        return;
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $result = json_decode($body, true);
-    
-    wp_send_json_success($result);
-}
-
-// Register AJAX handlers
-$ajax_actions = array(
-    'stock_scanner_get_quote', 'get_major_indices', 'get_market_movers',
-    'add_to_watchlist', 'remove_from_watchlist', 'get_usage_stats',
-    'get_formatted_portfolio_data', 'get_formatted_watchlist_data',
-    'update_user_account', 'update_user_settings', 'change_password',
-    'update_payment_method', 'get_billing_history', 'update_notification_settings'
-);
-
-foreach ($ajax_actions as $action) {
-    add_action("wp_ajax_$action", 'retail_trade_scanner_ajax_handler');
-    add_action("wp_ajax_nopriv_$action", 'retail_trade_scanner_ajax_handler');
-}
-
-/**
- * Add theme customization options
+ * Add theme customization options - Aligned with Plugin
  */
 function retail_trade_scanner_customize_register($wp_customize) {
     // Add section
@@ -519,9 +513,9 @@ function retail_trade_scanner_customize_register($wp_customize) {
         'priority' => 30,
     ));
     
-    // Add API endpoint setting
+    // Add API endpoint setting (compatible with plugin)
     $wp_customize->add_setting('retail_trade_scanner_api_endpoint', array(
-        'default' => 'https://api.retailtradescanner.com/api',
+        'default' => 'https://api.retailtradescanner.com/api/',
         'sanitize_callback' => 'esc_url_raw',
     ));
     
@@ -529,10 +523,10 @@ function retail_trade_scanner_customize_register($wp_customize) {
         'label' => __('Backend API URL', 'retail-trade-scanner'),
         'section' => 'retail_trade_scanner_options',
         'type' => 'url',
-        'description' => __('URL of your Retail Trade Scanner backend API', 'retail-trade-scanner'),
+        'description' => __('URL of your Retail Trade Scanner backend API (should match plugin setting)', 'retail-trade-scanner'),
     ));
     
-    // Add PayPal Client ID setting
+    // Add PayPal Client ID setting (compatible with plugin)
     $wp_customize->add_setting('retail_trade_scanner_paypal_client_id', array(
         'default' => '',
         'sanitize_callback' => 'sanitize_text_field',
@@ -542,7 +536,7 @@ function retail_trade_scanner_customize_register($wp_customize) {
         'label' => __('PayPal Client ID', 'retail-trade-scanner'),
         'section' => 'retail_trade_scanner_options',
         'type' => 'text',
-        'description' => __('Your PayPal application Client ID for payment processing', 'retail-trade-scanner'),
+        'description' => __('Your PayPal application Client ID (should match plugin setting)', 'retail-trade-scanner'),
     ));
 }
 add_action('customize_register', 'retail_trade_scanner_customize_register');
@@ -583,9 +577,9 @@ function retail_trade_scanner_ensure_assets() {
     $main_js_file = $assets_dir . 'main.js';
     if (!file_exists($main_js_file)) {
         $js_content = '
-// Retail Trade Scanner - Main JavaScript with PayPal Integration
+// Retail Trade Scanner - Main JavaScript with Plugin Integration
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("Retail Trade Scanner theme loaded with PayPal integration");
+    console.log("Retail Trade Scanner theme loaded - Plugin Active:", retail_trade_scanner_data.plugin_active);
     
     // Initialize search bar expansion
     const searchInput = document.querySelector(".search-input");
@@ -609,46 +603,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // PayPal Integration Functions
-    window.createPayPalOrder = function(planType, amount) {
-        return fetch(retail_trade_scanner_data.rest_url + "paypal/create-order", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-WP-Nonce": retail_trade_scanner_data.nonce
-            },
-            body: JSON.stringify({
-                plan_type: planType,
-                amount: amount
-            })
-        }).then(response => response.json()).then(data => {
-            if (data.success && data.id) {
-                return data.id;
+    // Upgrade button handlers for plugin integration
+    const upgradeButtons = document.querySelectorAll(".upgrade-btn");
+    upgradeButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            const level = this.getAttribute("data-level");
+            const price = this.getAttribute("data-price");
+            
+            if (retail_trade_scanner_data.plugin_active) {
+                // Redirect to plugin checkout if available
+                if (typeof window.pmpro_url === "function") {
+                    window.location.href = window.pmpro_url("checkout", "?level=" + level);
+                } else {
+                    window.location.href = "/membership-account/membership-checkout/?level=" + level;
+                }
             } else {
-                throw new Error(data.message || "Failed to create PayPal order");
+                // Show plugin required message
+                showNotification("Stock Scanner Plugin required for subscription management.", "error");
             }
         });
-    };
+    });
     
-    window.capturePayPalOrder = function(orderId) {
-        return fetch(retail_trade_scanner_data.rest_url + "paypal/capture-order/" + orderId, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-WP-Nonce": retail_trade_scanner_data.nonce
-            }
-        }).then(response => response.json()).then(data => {
-            if (data.success) {
-                showNotification("Payment successful! Your subscription has been activated.", "success");
-                setTimeout(() => {
-                    window.location.href = "/dashboard";
-                }, 2000);
-            } else {
-                throw new Error(data.message || "Failed to capture payment");
-            }
-        });
-    };
-    
+    // Notification function
     window.showNotification = function(message, type) {
         const notification = document.createElement("div");
         notification.style.cssText = `
@@ -661,6 +637,7 @@ document.addEventListener("DOMContentLoaded", function() {
             z-index: 1000;
             max-width: 300px;
             font-weight: 500;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         `;
         
         notification.style.backgroundColor = type === "success" ? "#059669" : "#dc2626";
@@ -672,6 +649,62 @@ document.addEventListener("DOMContentLoaded", function() {
             notification.remove();
         }, 5000);
     };
+    
+    // Stock widget refresh functionality (if plugin is active)
+    if (retail_trade_scanner_data.plugin_active && typeof stock_scanner_ajax !== "undefined") {
+        window.stockScanner = {
+            refreshStock: function(symbol) {
+                const widget = document.querySelector(`[data-symbol="${symbol}"]`);
+                if (!widget) return;
+                
+                const loading = widget.querySelector(".loading");
+                const priceDiv = widget.querySelector(".stock-price");
+                
+                if (loading) loading.style.display = "block";
+                if (priceDiv) priceDiv.style.display = "none";
+                
+                jQuery.post(stock_scanner_ajax.ajax_url, {
+                    action: "get_stock_data",
+                    symbol: symbol,
+                    nonce: stock_scanner_ajax.nonce
+                }, function(response) {
+                    if (response.success && response.data) {
+                        const data = response.data;
+                        
+                        if (loading) loading.style.display = "none";
+                        if (priceDiv) {
+                            priceDiv.style.display = "block";
+                            const price = priceDiv.querySelector(".price");
+                            const change = priceDiv.querySelector(".change");
+                            
+                            if (price) price.textContent = "$" + data.price;
+                            if (change) {
+                                change.textContent = data.change;
+                                change.className = "change " + (data.change.startsWith("+") ? "positive" : "negative");
+                            }
+                        }
+                        
+                        // Update details if shown
+                        const details = widget.querySelector(".stock-details");
+                        if (details && data.volume) {
+                            details.style.display = "block";
+                            const volume = details.querySelector(".volume");
+                            const marketCap = details.querySelector(".market-cap");
+                            
+                            if (volume) volume.textContent = data.volume;
+                            if (marketCap) marketCap.textContent = data.market_cap;
+                        }
+                    } else {
+                        showNotification("Failed to refresh stock data", "error");
+                        if (loading) loading.style.display = "none";
+                    }
+                }).fail(function() {
+                    showNotification("Error connecting to stock data service", "error");
+                    if (loading) loading.style.display = "none";
+                });
+            }
+        };
+    }
 });
 ';
         file_put_contents($main_js_file, $js_content);
@@ -697,7 +730,12 @@ function retail_trade_scanner_login_redirect($redirect_to, $request, $user) {
         if (in_array('administrator', $user->roles)) {
             return admin_url();
         } else {
-            return get_permalink(get_page_by_path('dashboard'));
+            // Redirect to membership account if available
+            $account_page = get_page_by_path('membership-account');
+            if ($account_page) {
+                return get_permalink($account_page);
+            }
+            return home_url();
         }
     }
     return $redirect_to;
@@ -756,3 +794,28 @@ function retail_trade_scanner_defer_scripts($tag, $handle, $src) {
     return $tag;
 }
 add_filter('script_loader_tag', 'retail_trade_scanner_defer_scripts', 10, 3);
+
+/**
+ * Integration helper functions
+ */
+function retail_trade_scanner_get_membership_level() {
+    if (function_exists('pmpro_getMembershipLevelForUser')) {
+        $level = pmpro_getMembershipLevelForUser(get_current_user_id());
+        return $level ? $level->id : 0;
+    }
+    return 0;
+}
+
+function retail_trade_scanner_can_user_access_feature($feature = 'stocks') {
+    $level = retail_trade_scanner_get_membership_level();
+    
+    $limits = array(
+        0 => array('stocks' => 15, 'watchlists' => 0, 'alerts' => 0),
+        1 => array('stocks' => 15, 'watchlists' => 0, 'alerts' => 0),  
+        2 => array('stocks' => 1000, 'watchlists' => 3, 'alerts' => 10),
+        3 => array('stocks' => 5000, 'watchlists' => 10, 'alerts' => 50),
+        4 => array('stocks' => 10000, 'watchlists' => -1, 'alerts' => -1)
+    );
+    
+    return isset($limits[$level][$feature]) ? $limits[$level][$feature] : 0;
+}

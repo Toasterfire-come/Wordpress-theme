@@ -1,6 +1,6 @@
 <?php
 /**
- * Template for Premium Plans page with PayPal Integration
+ * Template for Premium Plans page - Bug-Fixed & Plugin-Compatible Version
  * Retail Trade Scanner Theme - Updated Version
  */
 
@@ -20,7 +20,7 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- Pricing Section -->
+    <!-- Pricing Section - Plugin Compatible -->
     <section style="padding: 6rem 0;">
         <div class="container">
             <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
@@ -28,7 +28,7 @@ get_header(); ?>
                 <!-- Free Plan -->
                 <div class="pricing-card" style="background: white; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; position: relative;">
                     <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #0f172a;">
-                        <?php _e('Free', 'retail-trade-scanner'); ?>
+                        <?php _e('🆓 Free', 'retail-trade-scanner'); ?>
                     </h3>
                     <div style="font-size: 3rem; font-weight: bold; color: #0f172a; margin: 1rem 0;">
                         $0<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
@@ -40,7 +40,7 @@ get_header(); ?>
                     <ul style="list-style: none; margin: 2rem 0; text-align: left;">
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('15 API requests per month', 'retail-trade-scanner'); ?>
+                            <?php _e('15 stocks per month', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
@@ -60,22 +60,22 @@ get_header(); ?>
                         </li>
                     </ul>
                     
-                    <a href="<?php echo esc_url(get_permalink(get_page_by_path('signup'))); ?>" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem;">
+                    <a href="<?php echo wp_registration_url(); ?>" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem; text-decoration: none; display: inline-block; text-align: center;">
                         <?php _e('Get Started Free', 'retail-trade-scanner'); ?>
                     </a>
                 </div>
 
-                <!-- Basic Plan -->
-                <div class="pricing-card popular" style="background: white; border: 2px solid #059669; border-radius: 16px; padding: 2rem; text-align: center; position: relative; transform: scale(1.05);">
-                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #059669; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">
+                <!-- Bronze Plan - Aligned with Plugin Pricing -->
+                <div class="pricing-card popular" style="background: white; border: 2px solid #cd7f32; border-radius: 16px; padding: 2rem; text-align: center; position: relative; transform: scale(1.05);">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #cd7f32; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">
                         <?php _e('Most Popular', 'retail-trade-scanner'); ?>
                     </div>
                     
                     <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #0f172a;">
-                        <?php _e('Basic', 'retail-trade-scanner'); ?>
+                        <?php _e('🥉 Bronze', 'retail-trade-scanner'); ?>
                     </h3>
                     <div style="font-size: 3rem; font-weight: bold; color: #0f172a; margin: 1rem 0;">
-                        $24.99<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
+                        $14.99<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
                     </div>
                     <p style="color: #64748b; margin-bottom: 2rem;">
                         <?php _e('Enhanced features for active traders', 'retail-trade-scanner'); ?>
@@ -84,7 +84,7 @@ get_header(); ?>
                     <ul style="list-style: none; margin: 2rem 0; text-align: left;">
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('1,500 API requests per month', 'retail-trade-scanner'); ?>
+                            <?php _e('1,000 stocks per month', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
@@ -104,18 +104,26 @@ get_header(); ?>
                         </li>
                     </ul>
                     
-                    <div id="paypal-basic-button" style="width: 100%; min-height: 50px;">
-                        <!-- PayPal button will be rendered here -->
+                    <div id="bronze-payment-button" style="width: 100%; min-height: 50px;">
+                        <?php if (class_exists('StockScannerIntegration') && function_exists('pmpro_url')) : ?>
+                            <a href="<?php echo pmpro_url('checkout', '?level=2'); ?>" class="btn btn-primary" style="width: 100%; padding: 1rem; text-decoration: none; display: inline-block; text-align: center;">
+                                <?php _e('Upgrade to Bronze', 'retail-trade-scanner'); ?>
+                            </a>
+                        <?php else : ?>
+                            <button class="btn btn-primary upgrade-btn" data-level="2" data-price="14.99" style="width: 100%; padding: 1rem;">
+                                <?php _e('Upgrade to Bronze', 'retail-trade-scanner'); ?>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <!-- Pro Plan -->
-                <div class="pricing-card" style="background: white; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; position: relative;">
+                <!-- Silver Plan - Aligned with Plugin Pricing -->
+                <div class="pricing-card" style="background: white; border: 2px solid #c0c0c0; border-radius: 16px; padding: 2rem; text-align: center; position: relative;">
                     <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #0f172a;">
-                        <?php _e('Pro', 'retail-trade-scanner'); ?>
+                        <?php _e('🥈 Silver', 'retail-trade-scanner'); ?>
                     </h3>
                     <div style="font-size: 3rem; font-weight: bold; color: #0f172a; margin: 1rem 0;">
-                        $49.99<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
+                        $29.99<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
                     </div>
                     <p style="color: #64748b; margin-bottom: 2rem;">
                         <?php _e('Professional tools for serious traders', 'retail-trade-scanner'); ?>
@@ -124,19 +132,19 @@ get_header(); ?>
                     <ul style="list-style: none; margin: 2rem 0; text-align: left;">
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('5,000 API requests per month', 'retail-trade-scanner'); ?>
+                            <?php _e('5,000 stocks per month', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Unlimited portfolios', 'retail-trade-scanner'); ?>
+                            <?php _e('Advanced filtering & screening', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Advanced alert system', 'retail-trade-scanner'); ?>
+                            <?php _e('1-year historical data', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Full REST API access', 'retail-trade-scanner'); ?>
+                            <?php _e('Custom watchlists (10)', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
@@ -144,165 +152,206 @@ get_header(); ?>
                         </li>
                     </ul>
                     
-                    <div id="paypal-pro-button" style="width: 100%; min-height: 50px;">
-                        <!-- PayPal button will be rendered here -->
+                    <div id="silver-payment-button" style="width: 100%; min-height: 50px;">
+                        <?php if (class_exists('StockScannerIntegration') && function_exists('pmpro_url')) : ?>
+                            <a href="<?php echo pmpro_url('checkout', '?level=3'); ?>" class="btn btn-primary" style="width: 100%; padding: 1rem; text-decoration: none; display: inline-block; text-align: center;">
+                                <?php _e('Upgrade to Silver', 'retail-trade-scanner'); ?>
+                            </a>
+                        <?php else : ?>
+                            <button class="btn btn-primary upgrade-btn" data-level="3" data-price="29.99" style="width: 100%; padding: 1rem;">
+                                <?php _e('Upgrade to Silver', 'retail-trade-scanner'); ?>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <!-- Enterprise Plan -->
-                <div class="pricing-card" style="background: white; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; position: relative; grid-column: span 1;">
+                <!-- Gold Plan - Aligned with Plugin Pricing -->
+                <div class="pricing-card" style="background: white; border: 2px solid #ffd700; border-radius: 16px; padding: 2rem; text-align: center; position: relative;">
                     <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #0f172a;">
-                        <?php _e('Enterprise', 'retail-trade-scanner'); ?>
+                        <?php _e('🏆 Gold', 'retail-trade-scanner'); ?>
                     </h3>
-                    <div style="font-size: 2rem; font-weight: bold; color: #0f172a; margin: 1rem 0;">
-                        <?php _e('Contact Sales', 'retail-trade-scanner'); ?>
+                    <div style="font-size: 3rem; font-weight: bold; color: #0f172a; margin: 1rem 0;">
+                        $59.99<span style="font-size: 1rem; color: #64748b;"><?php _e('/month', 'retail-trade-scanner'); ?></span>
                     </div>
                     <p style="color: #64748b; margin-bottom: 2rem;">
-                        <?php _e('Custom solutions for institutions', 'retail-trade-scanner'); ?>
+                        <?php _e('Ultimate trading experience', 'retail-trade-scanner'); ?>
                     </p>
                     
                     <ul style="list-style: none; margin: 2rem 0; text-align: left;">
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Unlimited API requests', 'retail-trade-scanner'); ?>
+                            <?php _e('10,000 stocks per month', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Custom integrations', 'retail-trade-scanner'); ?>
+                            <?php _e('All premium features', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('Dedicated support manager', 'retail-trade-scanner'); ?>
+                            <?php _e('Real-time alerts', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('SLA guarantees', 'retail-trade-scanner'); ?>
+                            <?php _e('Full REST API access', 'retail-trade-scanner'); ?>
                         </li>
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="color: #059669;">✓</span>
-                            <?php _e('White-label options', 'retail-trade-scanner'); ?>
+                            <?php _e('Priority phone support', 'retail-trade-scanner'); ?>
                         </li>
                     </ul>
                     
-                    <a href="<?php echo esc_url(get_permalink(get_page_by_path('contact'))); ?>?plan=enterprise" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; text-decoration: none;">
-                        <?php _e('Contact Sales Team', 'retail-trade-scanner'); ?>
-                    </a>
+                    <div id="gold-payment-button" style="width: 100%; min-height: 50px;">
+                        <?php if (class_exists('StockScannerIntegration') && function_exists('pmpro_url')) : ?>
+                            <a href="<?php echo pmpro_url('checkout', '?level=4'); ?>" class="btn btn-primary" style="width: 100%; padding: 1rem; text-decoration: none; display: inline-block; text-align: center; background: #ffd700; color: #000;">
+                                <?php _e('Upgrade to Gold', 'retail-trade-scanner'); ?>
+                            </a>
+                        <?php else : ?>
+                            <button class="btn btn-primary upgrade-btn" data-level="4" data-price="59.99" style="width: 100%; padding: 1rem; background: #ffd700; color: #000;">
+                                <?php _e('Upgrade to Gold', 'retail-trade-scanner'); ?>
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
             <!-- Plan Comparison Button -->
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('compare-plans'))); ?>" class="btn btn-outline btn-large">
-                    <?php _e('Compare All Plans', 'retail-trade-scanner'); ?>
-                </a>
+                <p style="color: #64748b; margin-bottom: 1rem;">
+                    <?php _e('Need help choosing? Compare all features below.', 'retail-trade-scanner'); ?>
+                </p>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Live Demo Section -->
     <section style="padding: 6rem 0; background: white;">
         <div class="container">
             <div style="text-align: center; margin-bottom: 4rem;">
                 <h2 style="font-size: 2.5rem; font-weight: bold; color: #0f172a; margin-bottom: 1rem;">
-                    <?php _e('All Plans Include', 'retail-trade-scanner'); ?>
+                    <?php _e('📊 Live Stock Analysis Demo', 'retail-trade-scanner'); ?>
                 </h2>
                 <p style="font-size: 1.125rem; color: #64748b;">
-                    <?php _e('Professional features designed for serious traders', 'retail-trade-scanner'); ?>
+                    <?php _e('See our platform in action with real-time data', 'retail-trade-scanner'); ?>
                 </p>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #0f172a;">
-                        <?php _e('Secure & Reliable', 'retail-trade-scanner'); ?>
-                    </h3>
-                    <p style="color: #64748b;">
-                        <?php _e('Enterprise-grade security with 99.9% uptime guarantee', 'retail-trade-scanner'); ?>
-                    </p>
-                </div>
-                
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
-                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #0f172a;">
-                        <?php _e('Real-Time Data', 'retail-trade-scanner'); ?>
-                    </h3>
-                    <p style="color: #64748b;">
-                        <?php _e('Market data updated every 3 minutes during trading hours', 'retail-trade-scanner'); ?>
-                    </p>
-                </div>
-                
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📞</div>
-                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #0f172a;">
-                        <?php _e('Expert Support', 'retail-trade-scanner'); ?>
-                    </h3>
-                    <p style="color: #64748b;">
-                        <?php _e('Get help from our team of trading platform experts', 'retail-trade-scanner'); ?>
-                    </p>
-                </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+                <?php 
+                // Display stock widgets if plugin is active
+                if (class_exists('StockScannerIntegration')) {
+                    echo do_shortcode('[stock_scanner symbol="AAPL" show_chart="true" show_details="true"]');
+                    echo do_shortcode('[stock_scanner symbol="MSFT" show_chart="true" show_details="true"]');
+                    echo do_shortcode('[stock_scanner symbol="GOOGL" show_chart="true" show_details="true"]');
+                } else {
+                    // Fallback demo widgets
+                    echo '<div class="demo-widget" style="background: #f8fafc; padding: 2rem; border-radius: 12px; text-align: center;">
+                        <h4>📈 AAPL Demo</h4>
+                        <p style="color: #64748b;">Live widget requires Stock Scanner Plugin</p>
+                        <button class="btn btn-outline">Install Plugin</button>
+                    </div>';
+                    echo '<div class="demo-widget" style="background: #f8fafc; padding: 2rem; border-radius: 12px; text-align: center;">
+                        <h4>📊 MSFT Demo</h4>
+                        <p style="color: #64748b;">Live widget requires Stock Scanner Plugin</p>
+                        <button class="btn btn-outline">Install Plugin</button>
+                    </div>';
+                    echo '<div class="demo-widget" style="background: #f8fafc; padding: 2rem; border-radius: 12px; text-align: center;">
+                        <h4>🚀 GOOGL Demo</h4>
+                        <p style="color: #64748b;">Live widget requires Stock Scanner Plugin</p>
+                        <button class="btn btn-outline">Install Plugin</button>
+                    </div>';
+                }
+                ?>
             </div>
         </div>
     </section>
-</main>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    <?php if (get_option('retail_trade_scanner_paypal_client_id')) : ?>
-    // Initialize PayPal buttons only if Client ID is configured
-    if (window.paypal && retail_trade_scanner_data.paypal_client_id) {
-        
-        // Basic Plan PayPal Button
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return window.createPayPalOrder('basic', '24.99');
-            },
-            onApprove: function(data, actions) {
-                return window.capturePayPalOrder(data.orderID);
-            },
-            onError: function(err) {
-                console.error('PayPal Error:', err);
-                showNotification('Payment failed. Please try again.', 'error');
-            },
-            style: {
-                layout: 'vertical',
-                color: 'blue',
-                shape: 'rect',
-                label: 'paypal'
-            }
-        }).render('#paypal-basic-button');
+    <!-- Feature Comparison Table -->
+    <section style="padding: 6rem 0; background: #f8fafc;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 2.5rem; font-weight: bold; color: #0f172a; margin-bottom: 1rem;">
+                    <?php _e('📋 Detailed Feature Comparison', 'retail-trade-scanner'); ?>
+                </h2>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                    <thead>
+                        <tr style="background: #0f172a; color: white;">
+                            <th style="text-align: left; padding: 1.5rem; font-weight: 600;">Features</th>
+                            <th style="text-align: center; padding: 1.5rem; font-weight: 600;">Free</th>
+                            <th style="text-align: center; padding: 1.5rem; font-weight: 600;">Bronze</th>
+                            <th style="text-align: center; padding: 1.5rem; font-weight: 600;">Silver</th>
+                            <th style="text-align: center; padding: 1.5rem; font-weight: 600;">Gold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">Monthly Stock Lookups</td>
+                            <td style="text-align: center; padding: 1.5rem;">15</td>
+                            <td style="text-align: center; padding: 1.5rem; background: #fef3c7;">1,000</td>
+                            <td style="text-align: center; padding: 1.5rem; background: #f3f4f6;">5,000</td>
+                            <td style="text-align: center; padding: 1.5rem; background: #fef3c7;">10,000</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">Email List Subscriptions</td>
+                            <td style="text-align: center; padding: 1.5rem;">5</td>
+                            <td style="text-align: center; padding: 1.5rem;">15</td>
+                            <td style="text-align: center; padding: 1.5rem;">Unlimited</td>
+                            <td style="text-align: center; padding: 1.5rem;">Unlimited</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">Advanced Filtering</td>
+                            <td style="text-align: center; padding: 1.5rem;">❌</td>
+                            <td style="text-align: center; padding: 1.5rem;">Basic</td>
+                            <td style="text-align: center; padding: 1.5rem;">✅</td>
+                            <td style="text-align: center; padding: 1.5rem;">✅</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">Historical Data</td>
+                            <td style="text-align: center; padding: 1.5rem;">❌</td>
+                            <td style="text-align: center; padding: 1.5rem;">30 days</td>
+                            <td style="text-align: center; padding: 1.5rem;">1 year</td>
+                            <td style="text-align: center; padding: 1.5rem;">5 years</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">Custom Watchlists</td>
+                            <td style="text-align: center; padding: 1.5rem;">❌</td>
+                            <td style="text-align: center; padding: 1.5rem;">3</td>
+                            <td style="text-align: center; padding: 1.5rem;">10</td>
+                            <td style="text-align: center; padding: 1.5rem;">Unlimited</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1.5rem; font-weight: 500;">API Access</td>
+                            <td style="text-align: center; padding: 1.5rem;">❌</td>
+                            <td style="text-align: center; padding: 1.5rem;">❌</td>
+                            <td style="text-align: center; padding: 1.5rem;">Limited</td>
+                            <td style="text-align: center; padding: 1.5rem;">Full</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1.5rem; font-weight: 500;">Support Level</td>
+                            <td style="text-align: center; padding: 1.5rem;">Community</td>
+                            <td style="text-align: center; padding: 1.5rem;">Email</td>
+                            <td style="text-align: center; padding: 1.5rem;">Priority</td>
+                            <td style="text-align: center; padding: 1.5rem;">Phone + Manager</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-        // Pro Plan PayPal Button  
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return window.createPayPalOrder('pro', '49.99');
-            },
-            onApprove: function(data, actions) {
-                return window.capturePayPalOrder(data.orderID);
-            },
-            onError: function(err) {
-                console.error('PayPal Error:', err);
-                showNotification('Payment failed. Please try again.', 'error');
-            },
-            style: {
-                layout: 'vertical',
-                color: 'blue', 
-                shape: 'rect',
-                label: 'paypal'
-            }
-        }).render('#paypal-pro-button');
-        
-    } else {
-        // Fallback buttons if PayPal is not configured
-        document.getElementById('paypal-basic-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal integration not configured\')">Start Basic Plan</button>';
-        document.getElementById('paypal-pro-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal integration not configured\')">Start Pro Plan</button>';
-    }
-    <?php else : ?>
-    // Fallback buttons if PayPal Client ID is not set
-    document.getElementById('paypal-basic-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal Client ID not configured in Customizer\')">Start Basic Plan</button>';
-    document.getElementById('paypal-pro-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal Client ID not configured in Customizer\')">Start Pro Plan</button>';
+    <!-- Plugin Status Notice -->
+    <?php if (!class_exists('StockScannerIntegration')) : ?>
+    <section style="padding: 3rem 0; background: #fef3c7;">
+        <div class="container">
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h3 style="color: #92400e; margin-bottom: 1rem;">⚠️ Plugin Required</h3>
+                <p style="color: #92400e;">To enable subscription management and live stock data, please install and activate the <strong>Stock Scanner Integration</strong> plugin.</p>
+            </div>
+        </div>
+    </section>
     <?php endif; ?>
-});
-</script>
+</main>
 
 <?php get_footer(); ?>
