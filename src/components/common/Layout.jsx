@@ -345,7 +345,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center"></div>
               <div>
-                <h3 className="text-xl font-bold text-white">Stock Scanner Pro</h3>
+                <h3 className="text-xl font-bold text-white">Retail Trade Scanner</h3>
                 <p className="text-sm text-slate-400">Professional Trading Platform</p>
               </div>
             </Link>
@@ -353,30 +353,7 @@ const Footer = () => {
               Empowering traders with institutional-grade market data, advanced analytics, and professional tools. 
               Trusted by portfolio managers at leading financial institutions worldwide.
             </p>
-            
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              {[
-                { icon: Twitter, href: 'https://twitter.com/stockscannerpro', label: 'Twitter' },
-                { icon: Linkedin, href: 'https://linkedin.com/company/stockscannerpro', label: 'LinkedIn' },
-                { icon: Facebook, href: 'https://facebook.com/stockscannerpro', label: 'Facebook' },
-                { icon: Youtube, href: 'https://youtube.com/stockscannerpro', label: 'YouTube' },
-              ].map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors duration-200"
-                    aria-label={social.label}
-                  >
-                    <Icon className="h-5 w-5 text-slate-400 hover:text-white" />
-                  </a>
-                );
-              })}
-            </div>
+
           </div>
 
           {/* Footer Links */}
@@ -403,7 +380,7 @@ const Footer = () => {
         <div className="border-t border-slate-800 mt-16 pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-slate-400">
-              <p>© {currentYear} Stock Scanner Pro. All rights reserved.</p>
+              <p>© {currentYear} Retail Trade Scanner. All rights reserved.</p>
               <div className="flex items-center space-x-4">
                 <Link to="/sitemap" className="hover:text-white transition-colors duration-200">
                   Sitemap

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, MessageCircle, HeadphonesIcon, Users } from 'lucide-react';
+import { Mail, Send, CheckCircle, HeadphonesIcon } from 'lucide-react';
 import Layout from '../components/common/Layout';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -56,59 +56,13 @@ const Contact = () => {
       icon: Mail,
       title: 'Email Support',
       description: 'Get help from our support team',
-      contact: 'support@stockscannerpro.com',
+      contact: 'admin@retailtradesanner.com',
       response: 'Response within 24-48 hours',
       color: 'emerald'
-    },
-    {
-      icon: MessageCircle,
-      title: 'Technical Support',
-      description: 'Technical issues and API questions',
-      contact: 'technical@stockscannerpro.com',
-      response: 'Response within 24 hours',
-      color: 'blue'
-    },
-    {
-      icon: Users,
-      title: 'Enterprise Sales',
-      description: 'Custom solutions and enterprise plans',
-      contact: 'enterprise@stockscannerpro.com',
-      response: 'Response within 4 hours',
-      color: 'purple'
-    },
-    {
-      icon: HeadphonesIcon,
-      title: 'Priority Support',
-      description: 'Priority support for Pro+ subscribers',
-      contact: 'Available for Pro & Enterprise',
-      response: 'Response within 4 hours',
-      color: 'orange'
     }
   ];
 
-  const offices = [
-    {
-      city: 'New York',
-      address: '123 Wall Street, Suite 1500',
-      zipcode: 'New York, NY 10005',
-      phone: '+1 (212) 555-0123',
-      type: 'Headquarters'
-    },
-    {
-      city: 'London', 
-      address: '25 Canary Wharf, Level 42',
-      zipcode: 'London E14 5JP, UK',
-      phone: '+44 20 7946 0958',
-      type: 'European Office'
-    },
-    {
-      city: 'Singapore',
-      address: '1 Marina Bay, Tower 2, #35-01',
-      zipcode: 'Singapore 018989',
-      phone: '+65 6789 1234',
-      type: 'Asia Pacific'
-    }
-  ];
+  const offices = [];
 
   const faqs = [
     {
@@ -212,10 +166,10 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Form & Info */}
+      {/* Contact Form */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-16">
             {/* Contact Form */}
             <Card className="p-8">
               <h2 className="text-3xl font-bold text-slate-900 mb-8">Send Us a Message</h2>
@@ -322,54 +276,7 @@ const Contact = () => {
               </form>
             </Card>
 
-            {/* Office Locations & FAQ */}
-            <div className="space-y-8">
-              {/* Office Locations */}
-              <Card className="p-8">
-                <h3 className="text-2xl font-bold text-slate-900 mb-6">Global Offices</h3>
-                <div className="space-y-6">
-                  {offices.map((office, index) => (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MapPin className="h-5 w-5 text-emerald-600" />
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-bold text-slate-900">{office.city}</h4>
-                          <Badge className="bg-slate-100 text-slate-600 text-xs">{office.type}</Badge>
-                        </div>
-                        <p className="text-sm text-slate-600 mb-1">{office.address}</p>
-                        <p className="text-sm text-slate-600 mb-1">{office.zipcode}</p>
-                        <p className="text-sm font-semibold text-slate-900">{office.phone}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Business Hours */}
-              <Card className="p-8">
-                <h3 className="text-2xl font-bold text-slate-900 mb-6">Business Hours</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-5 w-5 text-emerald-600" />
-                    <div>
-                      <p className="font-semibold text-slate-900">Support Hours</p>
-                      <p className="text-sm text-slate-600">Monday - Friday: 9:00 AM - 6:00 PM EST</p>
-                      <p className="text-sm text-slate-600">Response times vary by plan tier</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <MessageCircle className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="font-semibold text-slate-900">Email Support</p>
-                      <p className="text-sm text-slate-600">Available for all plan tiers</p>
-                      <p className="text-sm text-slate-600">Priority response for Pro & Enterprise</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
+            
           </div>
         </div>
       </section>

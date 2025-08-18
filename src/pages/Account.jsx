@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Shield, CreditCard, Bell, Save, Edit2 } from 'lucide-react';
+import { User, Mail, Shield, Save } from 'lucide-react';
 import Layout from '../components/common/Layout';
 import PageHeader from '../components/common/PageHeader';
 import { LoadingState } from '../components/common/LoadingState';
@@ -19,32 +19,11 @@ const Account = () => {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   
-  const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    company: 'Investment Corp',
-    bio: 'Professional trader with 10+ years of experience in equity markets.',
-    joinDate: '2023-01-15',
-    accountType: 'Premium',
-    status: 'Active'
-  });
+  const [profileData, setProfileData] = useState(null);
 
-  const [notifications, setNotifications] = useState({
-    emailNotifications: true,
-    priceAlerts: true,
-    newsUpdates: true,
-    portfolioUpdates: true,
-    marketHours: false,
-    weeklyReports: true
-  });
+  const [notifications, setNotifications] = useState(null);
 
-  const [securitySettings, setSecuritySettings] = useState({
-    twoFactorEnabled: false,
-    lastPasswordChange: '2024-01-15',
-    loginNotifications: true
-  });
+  const [securitySettings, setSecuritySettings] = useState(null);
 
   useEffect(() => {
     loadAccountData();
@@ -55,11 +34,29 @@ const Account = () => {
     setError(null);
     
     try {
-      // In a real app, this would load actual user data
-      // For now, we'll simulate loading with existing mock data
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+      const [userResp, settingsResp] = await Promise.all([
+        stockAPI.getUserAccount(),
+        stockAPI.getUserSettings(),
+      ]);
+      if (userResp && (userResp.success !== false)) {
+        const u = userResp.data || userResp.user || userResp;
+        setProfileData({
+          firstName: u.first_name || u.firstName || '',
+          lastName: u.last_name || u.lastName || '',
+          email: u.email || '',
+          company: u.company || '',
+          bio: u.bio || '',
+          joinDate: u.join_date || u.joinDate || new Date().toISOString(),
+          accountType: u.account_type || u.accountType || 'Basic',
+          status: u.status || 'Active'
+        });
+      }
+      if (settingsResp && (settingsResp.success !== false)) {
+        const s = settingsResp.data || settingsResp;
+        setNotifications(s.notifications || {});
+        setSecuritySettings(s.security || {});
+      }
+      setLoading(false);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -69,9 +66,8 @@ const Account = () => {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      const response = await stockAPI.updateUserAccount(profileData);
+      const response = await stockAPI.updateUserAccount(profileData || {});
       if (response.success) {
-        // Show success message
         console.log('Profile updated successfully');
       }
     } catch (error) {
@@ -81,25 +77,10 @@ const Account = () => {
     }
   };
 
-  const handleUpdateNotifications = async () => {
-    setSaving(true);
-    try {
-      const response = await stockAPI.updateUserSettings({ notifications });
-      if (response.success) {
-        console.log('Notifications updated successfully');
-      }
-    } catch (error) {
-      console.error('Error updating notifications:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'security', label: 'Security', icon: Shield },
-    { id: 'billing', label: 'Billing', icon: CreditCard }
+    { id: 'billing', label: 'Billing', icon: Shield }
   ];
 
   if (loading) {
@@ -149,15 +130,15 @@ const Account = () => {
               <div className="text-center">
                 <Avatar className="h-20 w-20 mx-auto mb-4">
                   <AvatarFallback className="text-lg">
-                    {profileData.firstName[0]}{profileData.lastName[0]}
+                    {(profileData?.firstName || 'U')[0]}{(profileData?.lastName || '')[0]}
                   </AvatarFallback>
                 </Avatar>
                 <h3 className="text-lg font-semibold text-slate-900">
-                  {profileData.firstName} {profileData.lastName}
+                  {profileData?.firstName} {profileData?.lastName}
                 </h3>
-                <p className="text-slate-600">{profileData.email}</p>
+                <p className="text-slate-600">{profileData?.email}</p>
                 <Badge variant="outline" className="mt-2">
-                  {profileData.accountType}
+                  {profileData?.accountType}
                 </Badge>
               </div>
             </Card>
@@ -204,7 +185,7 @@ const Account = () => {
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      value={profileData.firstName}
+                      value={profileData?.firstName || ''}
                       onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
                     />
                   </div>
@@ -212,7 +193,7 @@ const Account = () => {
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
-                      value={profileData.lastName}
+                      value={profileData?.lastName || ''}
                       onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
                     />
                   </div>
@@ -221,23 +202,15 @@ const Account = () => {
                     <Input
                       id="email"
                       type="email"
-                      value={profileData.email}
+                      value={profileData?.email || ''}
                       onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                     />
                   </div>
                   <div className="md:col-span-2">
                     <Label htmlFor="company">Company</Label>
                     <Input
                       id="company"
-                      value={profileData.company}
+                      value={profileData?.company || ''}
                       onChange={(e) => setProfileData({...profileData, company: e.target.value})}
                     />
                   </div>
@@ -245,7 +218,7 @@ const Account = () => {
                     <Label htmlFor="bio">Bio</Label>
                     <Textarea
                       id="bio"
-                      value={profileData.bio}
+                      value={profileData?.bio || ''}
                       onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
                       rows={4}
                     />
@@ -257,55 +230,15 @@ const Account = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label>Member Since</Label>
-                      <p className="text-slate-900">{new Date(profileData.joinDate).toLocaleDateString()}</p>
+                      <p className="text-slate-900">{profileData?.joinDate ? new Date(profileData.joinDate).toLocaleDateString() : '—'}</p>
                     </div>
                     <div>
                       <Label>Account Status</Label>
                       <Badge variant="success" className="mt-1">
-                        {profileData.status}
+                        {profileData?.status}
                       </Badge>
                     </div>
                   </div>
-                </div>
-              </Card>
-            )}
-
-            {activeTab === 'notifications' && (
-              <Card className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-slate-900">Notification Preferences</h2>
-                  <Button
-                    onClick={handleUpdateNotifications}
-                    loading={saving}
-                    className="flex items-center"
-                  >
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Settings
-                  </Button>
-                </div>
-
-                <div className="space-y-6">
-                  {Object.entries(notifications).map(([key, value]) => (
-                    <div key={key} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
-                      <div>
-                        <h3 className="font-medium text-slate-900">
-                          {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                        </h3>
-                        <p className="text-slate-600 text-sm">
-                          {getNotificationDescription(key)}
-                        </p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={value}
-                          onChange={(e) => setNotifications({...notifications, [key]: e.target.checked})}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  ))}
                 </div>
               </Card>
             )}
@@ -322,8 +255,8 @@ const Account = () => {
                         Add an extra layer of security to your account
                       </p>
                     </div>
-                    <Button variant={securitySettings.twoFactorEnabled ? "outline" : "default"}>
-                      {securitySettings.twoFactorEnabled ? "Disable" : "Enable"}
+                    <Button variant={securitySettings?.twoFactorEnabled ? "outline" : "default"}>
+                      {securitySettings?.twoFactorEnabled ? "Disable" : "Enable"}
                     </Button>
                   </div>
 
@@ -331,7 +264,7 @@ const Account = () => {
                     <div>
                       <h3 className="font-medium text-slate-900">Password</h3>
                       <p className="text-slate-600 text-sm">
-                        Last changed on {new Date(securitySettings.lastPasswordChange).toLocaleDateString()}
+                        Last changed on {securitySettings?.lastPasswordChange ? new Date(securitySettings.lastPasswordChange).toLocaleDateString() : '—'}
                       </p>
                     </div>
                     <Button variant="outline">
@@ -349,9 +282,9 @@ const Account = () => {
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={securitySettings.loginNotifications}
+                        checked={!!securitySettings?.loginNotifications}
                         onChange={(e) => setSecuritySettings({
-                          ...securitySettings, 
+                          ...(securitySettings || {}), 
                           loginNotifications: e.target.checked
                         })}
                         className="sr-only peer"
@@ -370,25 +303,13 @@ const Account = () => {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <div>
-                      <h3 className="font-medium text-blue-900">Current Plan: Premium</h3>
+                      <h3 className="font-medium text-blue-900">Current Plan</h3>
                       <p className="text-blue-700 text-sm">
-                        Next billing date: March 15, 2024
+                        Manage your subscription plan and billing
                       </p>
                     </div>
-                    <Button variant="outline">
+                    <Button variant="outline" onClick={() => window.location.href = '/premium'}>
                       Manage Plan
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
-                    <div>
-                      <h3 className="font-medium text-slate-900">Payment Method</h3>
-                      <p className="text-slate-600 text-sm">
-                        •••• •••• •••• 4567 (Expires 12/25)
-                      </p>
-                    </div>
-                    <Button variant="outline">
-                      Update Payment
                     </Button>
                   </div>
 
