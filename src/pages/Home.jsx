@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { ArrowRight, TrendingUp, BarChart3, Bell, DollarSign, Users, Zap, Shield, Star, Check, Globe, Award, CreditCard, Database, Lock, Activity, AlertTriangle, FileText, PieChart, Target, Layers, RefreshCw } from 'lucide-react';
 import Layout from '../components/common/Layout';
 import { Card } from '../components/ui/card';
@@ -8,11 +10,18 @@ import { stockAPI } from '../services/api';
 
 const Home = () => {
   const [marketData, setMarketData] = useState(null);
+  const navigate = useNavigate();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (isAuthenticated) {
+      navigate('/dashboard');
+      return;
+    }
     loadMarketData();
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
   const loadMarketData = async () => {
     setLoading(true);
