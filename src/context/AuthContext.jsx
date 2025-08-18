@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = {
