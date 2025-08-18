@@ -1,17 +1,17 @@
 /*
 Theme Name: Retail Trade Scanner
-Description: Professional stock analysis and portfolio management theme with React integration
+Description: Professional stock analysis and portfolio management theme with PayPal integration
 Author: Retail Trade Scanner
-Version: 1.0.0
+Version: 2.0.0
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
 License: GPL v2 or later
-Tags: business, finance, stock-market, trading, portfolio, responsive, custom-colors, custom-menu, featured-images, footer-widgets, sticky-post, theme-options, react
+Tags: business, finance, stock-market, trading, portfolio, responsive, custom-colors, custom-menu, featured-images, footer-widgets, sticky-post, theme-options, paypal-integration
 Text Domain: retail-trade-scanner
 */
 
-/* Retail Trade Scanner - Professional Trading Interface with React */
+/* Retail Trade Scanner - Professional Trading Interface with PayPal Integration */
 
 /* CSS Variables for consistent theming */
 :root {
@@ -35,9 +35,12 @@ Text Domain: retail-trade-scanner
   --green-500: #10b981;
   --green-600: #059669;
   --yellow-500: #f59e0b;
+  --paypal-blue: #0070ba;
+  --paypal-gold: #ffc439;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
 }
 
 /* Base styles and resets */
@@ -225,6 +228,7 @@ body {
 
 .btn-primary:hover {
   background: var(--emerald-700);
+  transform: translateY(-1px);
 }
 
 .btn-outline {
@@ -235,11 +239,70 @@ body {
 
 .btn-outline:hover {
   background: var(--slate-50);
+  transform: translateY(-1px);
 }
 
 .btn-large {
   padding: 1rem 2rem;
   font-size: 1.125rem;
+}
+
+/* PayPal Integration Styles */
+.btn-paypal {
+  background: var(--paypal-blue);
+  color: white;
+  border: none;
+}
+
+.btn-paypal:hover {
+  background: #005ea6;
+  transform: translateY(-1px);
+}
+
+.paypal-container {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  background: white;
+}
+
+.paypal-button-container {
+  min-height: 50px;
+  margin: 1rem 0;
+}
+
+/* Pricing Cards Enhanced */
+.pricing-card {
+  background: white;
+  border: 2px solid var(--slate-200);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.pricing-card.popular {
+  border-color: var(--emerald-600);
+  box-shadow: var(--shadow-lg);
+}
+
+.pricing-card.popular::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--emerald-600), var(--emerald-400));
+  border-radius: 16px 16px 0 0;
 }
 
 /* Card styles */
@@ -273,6 +336,114 @@ body {
   font-size: 0.875rem;
 }
 
+/* Enhanced Form Styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--slate-700);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--slate-300);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--emerald-600);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
+  max-width: 350px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+  background: var(--emerald-600);
+}
+
+.notification.error {
+  background: var(--red-600);
+}
+
+.notification.info {
+  background: var(--primary-blue);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Progress Indicators */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--slate-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--emerald-600);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Loading States */
+.loading-spinner {
+  border: 4px solid var(--slate-200);
+  border-top: 4px solid var(--emerald-600);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Grid System */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
 /* Responsive design */
 @media (max-width: 768px) {
   .search-input:focus,
@@ -289,6 +460,36 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     gap: 1rem;
+  }
+  
+  .pricing-card.popular {
+    transform: none;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-large {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .pricing-card {
+    padding: 1.5rem;
   }
 }
 
@@ -312,6 +513,7 @@ body {
 
 .font-bold { font-weight: 700; }
 .font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
 
 .text-sm { font-size: 0.875rem; }
 .text-lg { font-size: 1.125rem; }
@@ -320,6 +522,24 @@ body {
 .text-3xl { font-size: 1.875rem; }
 
 .hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+.rounded { border-radius: 0.375rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-2xl { border-radius: 1rem; }
+
+.shadow { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
 
 /* WordPress specific styles */
 .wp-block-group {
@@ -347,17 +567,34 @@ body {
   text-align: right;
 }
 
-/* Loading and error states */
-.loading-spinner {
-  border: 4px solid var(--slate-200);
-  border-top: 4px solid var(--emerald-600);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: var(--slate-800);
+    border-color: var(--slate-700);
+    color: var(--slate-100);
+  }
+  
+  .form-input {
+    background: var(--slate-700);
+    border-color: var(--slate-600);
+    color: var(--slate-100);
+  }
+  
+  .form-input:focus {
+    border-color: var(--emerald-500);
+  }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Print styles */
+@media print {
+  .btn,
+  .search-container,
+  .main-navigation {
+    display: none;
+  }
+  
+  .pricing-card {
+    page-break-inside: avoid;
+  }
 }

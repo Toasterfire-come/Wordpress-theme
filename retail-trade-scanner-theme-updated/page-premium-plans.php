@@ -1,7 +1,7 @@
 <?php
 /**
- * Template for Premium Plans page
- * Retail Trade Scanner Theme
+ * Template for Premium Plans page with PayPal Integration
+ * Retail Trade Scanner Theme - Updated Version
  */
 
 get_header(); ?>
@@ -104,9 +104,9 @@ get_header(); ?>
                         </li>
                     </ul>
                     
-                    <button onclick="selectPlan('basic', 24.99)" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;">
-                        <?php _e('Start Basic Plan', 'retail-trade-scanner'); ?>
-                    </button>
+                    <div id="paypal-basic-button" style="width: 100%; min-height: 50px;">
+                        <!-- PayPal button will be rendered here -->
+                    </div>
                 </div>
 
                 <!-- Pro Plan -->
@@ -144,9 +144,9 @@ get_header(); ?>
                         </li>
                     </ul>
                     
-                    <button onclick="selectPlan('pro', 49.99)" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;">
-                        <?php _e('Start Pro Plan', 'retail-trade-scanner'); ?>
-                    </button>
+                    <div id="paypal-pro-button" style="width: 100%; min-height: 50px;">
+                        <!-- PayPal button will be rendered here -->
+                    </div>
                 </div>
 
                 <!-- Enterprise Plan -->
@@ -247,13 +247,62 @@ get_header(); ?>
 </main>
 
 <script>
-function selectPlan(planType, price) {
-    // Handle plan selection
-    if (confirm(`<?php _e('Start', 'retail-trade-scanner'); ?> ${planType.toUpperCase()} <?php _e('plan for', 'retail-trade-scanner'); ?> $${price}/<?php _e('month', 'retail-trade-scanner'); ?>?`)) {
-        // Redirect to checkout or payment processing
-        window.location.href = `<?php echo esc_url(get_permalink(get_page_by_path('account'))); ?>?upgrade=${planType}`;
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if (get_option('retail_trade_scanner_paypal_client_id')) : ?>
+    // Initialize PayPal buttons only if Client ID is configured
+    if (window.paypal && retail_trade_scanner_data.paypal_client_id) {
+        
+        // Basic Plan PayPal Button
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return window.createPayPalOrder('basic', '24.99');
+            },
+            onApprove: function(data, actions) {
+                return window.capturePayPalOrder(data.orderID);
+            },
+            onError: function(err) {
+                console.error('PayPal Error:', err);
+                showNotification('Payment failed. Please try again.', 'error');
+            },
+            style: {
+                layout: 'vertical',
+                color: 'blue',
+                shape: 'rect',
+                label: 'paypal'
+            }
+        }).render('#paypal-basic-button');
+
+        // Pro Plan PayPal Button  
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return window.createPayPalOrder('pro', '49.99');
+            },
+            onApprove: function(data, actions) {
+                return window.capturePayPalOrder(data.orderID);
+            },
+            onError: function(err) {
+                console.error('PayPal Error:', err);
+                showNotification('Payment failed. Please try again.', 'error');
+            },
+            style: {
+                layout: 'vertical',
+                color: 'blue', 
+                shape: 'rect',
+                label: 'paypal'
+            }
+        }).render('#paypal-pro-button');
+        
+    } else {
+        // Fallback buttons if PayPal is not configured
+        document.getElementById('paypal-basic-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal integration not configured\')">Start Basic Plan</button>';
+        document.getElementById('paypal-pro-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal integration not configured\')">Start Pro Plan</button>';
     }
-}
+    <?php else : ?>
+    // Fallback buttons if PayPal Client ID is not set
+    document.getElementById('paypal-basic-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal Client ID not configured in Customizer\')">Start Basic Plan</button>';
+    document.getElementById('paypal-pro-button').innerHTML = '<button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="alert(\'PayPal Client ID not configured in Customizer\')">Start Pro Plan</button>';
+    <?php endif; ?>
+});
 </script>
 
 <?php get_footer(); ?>

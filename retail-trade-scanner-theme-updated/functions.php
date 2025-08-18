@@ -1,6 +1,6 @@
 <?php
 /**
- * Retail Trade Scanner Theme Functions - Updated Version
+ * Retail Trade Scanner Theme Functions - Updated Version with PayPal Integration
  */
 
 // Prevent direct access
@@ -40,10 +40,13 @@ add_action('after_setup_theme', 'retail_trade_scanner_setup');
  */
 function retail_trade_scanner_scripts() {
     // Enqueue theme stylesheet
-    wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '1.1.0');
+    wp_enqueue_style('retail-trade-scanner-style', get_stylesheet_uri(), array(), '2.0.0');
+    
+    // Enqueue PayPal SDK
+    wp_enqueue_script('paypal-sdk', 'https://www.paypal.com/sdk/js?client-id=' . get_option('retail_trade_scanner_paypal_client_id', ''), array(), '2.0.0', true);
     
     // Enqueue custom JavaScript
-    wp_enqueue_script('retail-trade-scanner-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '1.1.0', true);
+    wp_enqueue_script('retail-trade-scanner-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery', 'paypal-sdk'), '2.0.0', true);
     
     // Localize script for AJAX and REST API
     wp_localize_script('retail-trade-scanner-script', 'retail_trade_scanner_data', array(
@@ -51,6 +54,7 @@ function retail_trade_scanner_scripts() {
         'rest_url' => rest_url('retail-trade-scanner/v1/'),
         'nonce' => wp_create_nonce('retail_trade_scanner_nonce'),
         'backend_url' => defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api',
+        'paypal_client_id' => get_option('retail_trade_scanner_paypal_client_id', ''),
         'api_endpoints' => array(
             'stocks' => rest_url('retail-trade-scanner/v1/stocks/'),
             'market_data' => rest_url('retail-trade-scanner/v1/market-data/'),
@@ -59,6 +63,7 @@ function retail_trade_scanner_scripts() {
             'news' => rest_url('retail-trade-scanner/v1/news/'),
             'user' => rest_url('retail-trade-scanner/v1/user/'),
             'billing' => rest_url('retail-trade-scanner/v1/billing/'),
+            'paypal' => rest_url('retail-trade-scanner/v1/paypal/'),
         ),
     ));
 }
@@ -242,9 +247,33 @@ add_action('widgets_init', 'retail_trade_scanner_widgets_init');
  * REST API Endpoints for external backend integration
  */
 function retail_trade_scanner_register_rest_routes() {
+    // Existing proxy route
     register_rest_route('retail-trade-scanner/v1', '/proxy/(?P<endpoint>.*)', array(
         'methods' => array('GET', 'POST', 'PUT', 'DELETE'),
         'callback' => 'retail_trade_scanner_api_proxy',
+        'permission_callback' => '__return_true',
+    ));
+    
+    // PayPal routes
+    register_rest_route('retail-trade-scanner/v1', '/paypal/create-order', array(
+        'methods' => 'POST',
+        'callback' => 'retail_trade_scanner_create_paypal_order',
+        'permission_callback' => function() {
+            return is_user_logged_in();
+        },
+    ));
+    
+    register_rest_route('retail-trade-scanner/v1', '/paypal/capture-order/(?P<order_id>[^/]+)', array(
+        'methods' => 'POST',
+        'callback' => 'retail_trade_scanner_capture_paypal_order',
+        'permission_callback' => function() {
+            return is_user_logged_in();
+        },
+    ));
+    
+    register_rest_route('retail-trade-scanner/v1', '/paypal/webhook', array(
+        'methods' => 'POST',
+        'callback' => 'retail_trade_scanner_paypal_webhook',
         'permission_callback' => '__return_true',
     ));
 }
@@ -258,8 +287,8 @@ function retail_trade_scanner_api_proxy($request) {
     $method = $request->get_method();
     $params = $request->get_params();
     
-    // Get backend URL from options or environment
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'http://localhost:8001/api';
+    // Get backend URL from options or environment - Updated to use api.retailtradescanner.com
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
     
     $api_url = trailingslashit($backend_url) . $endpoint;
     
@@ -298,6 +327,113 @@ function retail_trade_scanner_api_proxy($request) {
 }
 
 /**
+ * PayPal Create Order
+ */
+function retail_trade_scanner_create_paypal_order($request) {
+    $plan_type = $request->get_param('plan_type');
+    $amount = $request->get_param('amount');
+    
+    $plan_amounts = array(
+        'basic' => '24.99',
+        'pro' => '49.99'
+    );
+    
+    if (!isset($plan_amounts[$plan_type])) {
+        return new WP_Error('invalid_plan', 'Invalid plan type', array('status' => 400));
+    }
+    
+    $amount = $plan_amounts[$plan_type];
+    $user_id = get_current_user_id();
+    
+    // Forward to backend API
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
+    $api_url = trailingslashit($backend_url) . 'paypal/create-order';
+    
+    $args = array(
+        'method' => 'POST',
+        'timeout' => 30,
+        'headers' => array(
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . get_user_meta($user_id, 'api_token', true)
+        ),
+        'body' => json_encode(array(
+            'plan_type' => $plan_type,
+            'amount' => $amount,
+            'user_id' => $user_id,
+            'user_email' => wp_get_current_user()->user_email
+        ))
+    );
+    
+    $response = wp_remote_post($api_url, $args);
+    
+    if (is_wp_error($response)) {
+        return new WP_Error('paypal_error', $response->get_error_message(), array('status' => 500));
+    }
+    
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+    
+    return new WP_REST_Response($data, wp_remote_retrieve_response_code($response));
+}
+
+/**
+ * PayPal Capture Order
+ */
+function retail_trade_scanner_capture_paypal_order($request) {
+    $order_id = $request->get_param('order_id');
+    $user_id = get_current_user_id();
+    
+    // Forward to backend API
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
+    $api_url = trailingslashit($backend_url) . 'paypal/capture-order/' . $order_id;
+    
+    $args = array(
+        'method' => 'POST',
+        'timeout' => 30,
+        'headers' => array(
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . get_user_meta($user_id, 'api_token', true)
+        ),
+        'body' => json_encode(array(
+            'user_id' => $user_id
+        ))
+    );
+    
+    $response = wp_remote_post($api_url, $args);
+    
+    if (is_wp_error($response)) {
+        return new WP_Error('paypal_error', $response->get_error_message(), array('status' => 500));
+    }
+    
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+    
+    return new WP_REST_Response($data, wp_remote_retrieve_response_code($response));
+}
+
+/**
+ * PayPal Webhook Handler
+ */
+function retail_trade_scanner_paypal_webhook($request) {
+    // Forward to backend API for processing
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
+    $api_url = trailingslashit($backend_url) . 'paypal/webhook';
+    
+    $args = array(
+        'method' => 'POST',
+        'timeout' => 30,
+        'headers' => array(
+            'Content-Type' => 'application/json'
+        ),
+        'body' => $request->get_body()
+    );
+    
+    $response = wp_remote_post($api_url, $args);
+    
+    return new WP_REST_Response(array('status' => 'processed'), 200);
+}
+
+/**
  * AJAX Handlers for backward compatibility
  */
 function retail_trade_scanner_ajax_handler() {
@@ -331,7 +467,7 @@ function retail_trade_scanner_ajax_handler() {
     $data = array_map('sanitize_text_field', $_POST);
     
     // Proxy to external API
-    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'http://localhost:8001/api';
+    $backend_url = defined('RETAIL_TRADE_SCANNER_API_URL') ? RETAIL_TRADE_SCANNER_API_URL : 'https://api.retailtradescanner.com/api';
     $api_url = trailingslashit($backend_url) . $backend_endpoint;
     
     $args = array(
@@ -385,7 +521,7 @@ function retail_trade_scanner_customize_register($wp_customize) {
     
     // Add API endpoint setting
     $wp_customize->add_setting('retail_trade_scanner_api_endpoint', array(
-        'default' => '',
+        'default' => 'https://api.retailtradescanner.com/api',
         'sanitize_callback' => 'esc_url_raw',
     ));
     
@@ -394,6 +530,19 @@ function retail_trade_scanner_customize_register($wp_customize) {
         'section' => 'retail_trade_scanner_options',
         'type' => 'url',
         'description' => __('URL of your Retail Trade Scanner backend API', 'retail-trade-scanner'),
+    ));
+    
+    // Add PayPal Client ID setting
+    $wp_customize->add_setting('retail_trade_scanner_paypal_client_id', array(
+        'default' => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    
+    $wp_customize->add_control('retail_trade_scanner_paypal_client_id', array(
+        'label' => __('PayPal Client ID', 'retail-trade-scanner'),
+        'section' => 'retail_trade_scanner_options',
+        'type' => 'text',
+        'description' => __('Your PayPal application Client ID for payment processing', 'retail-trade-scanner'),
     ));
 }
 add_action('customize_register', 'retail_trade_scanner_customize_register');
@@ -434,9 +583,9 @@ function retail_trade_scanner_ensure_assets() {
     $main_js_file = $assets_dir . 'main.js';
     if (!file_exists($main_js_file)) {
         $js_content = '
-// Retail Trade Scanner - Main JavaScript
+// Retail Trade Scanner - Main JavaScript with PayPal Integration
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("Retail Trade Scanner theme loaded");
+    console.log("Retail Trade Scanner theme loaded with PayPal integration");
     
     // Initialize search bar expansion
     const searchInput = document.querySelector(".search-input");
@@ -459,6 +608,70 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    
+    // PayPal Integration Functions
+    window.createPayPalOrder = function(planType, amount) {
+        return fetch(retail_trade_scanner_data.rest_url + "paypal/create-order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-WP-Nonce": retail_trade_scanner_data.nonce
+            },
+            body: JSON.stringify({
+                plan_type: planType,
+                amount: amount
+            })
+        }).then(response => response.json()).then(data => {
+            if (data.success && data.id) {
+                return data.id;
+            } else {
+                throw new Error(data.message || "Failed to create PayPal order");
+            }
+        });
+    };
+    
+    window.capturePayPalOrder = function(orderId) {
+        return fetch(retail_trade_scanner_data.rest_url + "paypal/capture-order/" + orderId, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-WP-Nonce": retail_trade_scanner_data.nonce
+            }
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                showNotification("Payment successful! Your subscription has been activated.", "success");
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 2000);
+            } else {
+                throw new Error(data.message || "Failed to capture payment");
+            }
+        });
+    };
+    
+    window.showNotification = function(message, type) {
+        const notification = document.createElement("div");
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            max-width: 300px;
+            font-weight: 500;
+        `;
+        
+        notification.style.backgroundColor = type === "success" ? "#059669" : "#dc2626";
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    };
 });
 ';
         file_put_contents($main_js_file, $js_content);
