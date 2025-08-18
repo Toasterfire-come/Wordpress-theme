@@ -134,7 +134,9 @@ const Dashboard = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-slate-600">Portfolio Value</p>
                 <p className="text-2xl font-bold text-slate-900">
-                  {portfolio ? formatCurrency(portfolio.total_value || 125000) : formatCurrency(125000)}
+                  {typeof portfolio?.total_value === 'number' 
+                    ? formatCurrency(portfolio.total_value) 
+                    : '—'}
                 </p>
               </div>
             </div>
