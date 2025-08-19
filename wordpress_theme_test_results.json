@@ -1,0 +1,544 @@
+{
+  "syntax_validation": {
+    "php": {
+      "passed": 0,
+      "failed": 0,
+      "errors": [
+        {
+          "file": "page-contact.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-status.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-portfolio.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "404.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-market-overview.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-dashboard.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-faq.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-premium-plans.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "search.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-signup.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-privacy.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "single.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-login.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-notifications.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-scanner.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "index.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-account.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "searchform.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "header.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "comments.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-billing-history.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "footer.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "functions.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-terms.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "archive.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-about.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        },
+        {
+          "file": "page-news.php",
+          "error": "Could not check syntax: [Errno 2] No such file or directory: 'php'"
+        }
+      ]
+    },
+    "javascript": {
+      "passed": 1,
+      "failed": 2,
+      "errors": [
+        {
+          "file": "assets/js/main.js",
+          "line": 184,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 187,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 196,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 204,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 343,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 438,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 444,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 447,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 529,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 532,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 564,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 576,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/main.js",
+          "line": 587,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 42,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 58,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 104,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 143,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 152,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 159,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 176,
+          "error": "Potentially unclosed parentheses"
+        },
+        {
+          "file": "assets/js/paypal-integration.js",
+          "line": 203,
+          "warning": "Console.log found - should be removed for production"
+        }
+      ],
+      "warnings": []
+    },
+    "css": {
+      "passed": 0,
+      "failed": 2,
+      "errors": [
+        {
+          "file": "style.css",
+          "line": 2,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 3,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 4,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 5,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 6,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 7,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 8,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 9,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 10,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 11,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 114,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 265,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 293,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 327,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 579,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 580,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 581,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 588,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 593,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 777,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 960,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 961,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "style.css",
+          "line": 962,
+          "warning": "Potentially missing semicolon"
+        },
+        {
+          "file": "build/static/css/main.64506ea8.css",
+          "line": 2,
+          "warning": "Potentially missing semicolon"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  "functionality_tests": {
+    "theme_structure": {
+      "required_files": {
+        "missing": [],
+        "present": [
+          "style.css",
+          "index.php",
+          "functions.php"
+        ]
+      },
+      "recommended_files": {
+        "missing": [],
+        "present": [
+          "header.php",
+          "footer.php",
+          "single.php",
+          "page.php",
+          "archive.php",
+          "404.php"
+        ]
+      },
+      "custom_templates": [
+        "page-contact.php",
+        "page-status.php",
+        "page-portfolio.php",
+        "page-market-overview.php",
+        "page-dashboard.php",
+        "page-faq.php",
+        "page-premium-plans.php",
+        "page-signup.php",
+        "page-privacy.php",
+        "page-login.php",
+        "page-notifications.php",
+        "page-scanner.php",
+        "page-account.php",
+        "page-billing-history.php",
+        "page-terms.php",
+        "page-about.php",
+        "page-news.php"
+      ]
+    },
+    "functions_php": {
+      "security_checks": [
+        "Nonce verification implemented",
+        "Input sanitization found"
+      ],
+      "wordpress_hooks": [
+        "wp_enqueue_scripts hook used",
+        "after_setup_theme hook used",
+        "widgets_init hook used"
+      ],
+      "best_practices": [
+        "Theme support features added",
+        "Navigation menus registered"
+      ],
+      "issues": []
+    },
+    "javascript": {
+      "error_handling": 3,
+      "api_integration": 3,
+      "event_listeners": 3,
+      "accessibility": 1,
+      "issues": []
+    }
+  },
+  "integration_tests": {
+    "wordpress": {
+      "hooks_and_filters": [
+        "add_action",
+        "add_filter",
+        "remove_action"
+      ],
+      "custom_post_types": [],
+      "rest_api": [
+        "Custom REST endpoints registered"
+      ],
+      "user_management": [
+        "User management functions implemented"
+      ],
+      "issues": []
+    },
+    "rest_api": {
+      "endpoints_defined": [
+        "register_rest_route('retail-trade-scanner/v1', '/proxy/(?P<endpoint>.*)"
+      ],
+      "permission_checks": [
+        "Permission callbacks implemented"
+      ],
+      "error_handling": [
+        "WP_Error handling implemented"
+      ],
+      "issues": []
+    }
+  },
+  "security_tests": {
+    "sql_injection": [],
+    "xss_protection": [
+      "search.php: Output escaping implemented",
+      "single.php: Output escaping implemented",
+      "page-account.php: Output escaping implemented",
+      "searchform.php: Output escaping implemented",
+      "comments.php: Output escaping implemented",
+      "functions.php: Output escaping implemented",
+      "page.php: Output escaping implemented"
+    ],
+    "csrf_protection": [
+      "functions.php: Nonce verification implemented"
+    ],
+    "input_validation": {
+      "sanitization_functions": [
+        "sanitize_text_field",
+        "sanitize_email",
+        "sanitize_title",
+        "wp_kses_post",
+        "esc_attr"
+      ],
+      "validation_functions": [
+        "is_email",
+        "wp_verify_nonce",
+        "current_user_can"
+      ],
+      "missing_validation": []
+    },
+    "vulnerabilities": []
+  },
+  "performance_tests": {
+    "file_sizes": {
+      "page-contact.php": "12.5KB",
+      "page-status.php": "7.3KB",
+      "page-portfolio.php": "11.3KB",
+      "404.php": "1.7KB",
+      "page-market-overview.php": "11.8KB",
+      "page-dashboard.php": "14.3KB",
+      "page-faq.php": "15.0KB",
+      "page-premium-plans.php": "23.4KB",
+      "search.php": "4.1KB",
+      "page-signup.php": "11.6KB",
+      "page-privacy.php": "9.4KB",
+      "single.php": "4.3KB",
+      "page-login.php": "7.4KB",
+      "page-notifications.php": "23.5KB",
+      "page-scanner.php": "38.9KB",
+      "index.php": "14.5KB",
+      "page-account.php": "34.3KB",
+      "searchform.php": "0.9KB",
+      "header.php": "11.5KB",
+      "comments.php": "6.9KB",
+      "page-billing-history.php": "18.0KB",
+      "footer.php": "12.1KB",
+      "functions.php": "35.5KB",
+      "page.php": "1.9KB",
+      "page-terms.php": "7.5KB",
+      "archive.php": "4.3KB",
+      "page-about.php": "10.1KB",
+      "page-news.php": "10.6KB",
+      "assets/js/main.js": "27.5KB",
+      "assets/js/paypal-integration.js": "13.7KB",
+      "build/static/js/main.71bfb5df.js": "384.6KB",
+      "style.css": "20.2KB",
+      "build/static/css/main.64506ea8.css": "84.4KB"
+    },
+    "optimization_issues": [
+      "main.71bfb5df.js is 384.6KB - consider optimization"
+    ],
+    "best_practices": [
+      "Scripts properly enqueued",
+      "Styles properly enqueued"
+    ]
+  },
+  "accessibility_tests": {
+    "aria_labels": 62,
+    "semantic_html": 56,
+    "keyboard_navigation": 4,
+    "color_contrast": [],
+    "issues": []
+  },
+  "overall_score": 84,
+  "issues_found": [],
+  "recommendations": [
+    "Fix JAVASCRIPT syntax errors before deployment",
+    "Fix CSS syntax errors before deployment",
+    "Optimize large files for better performance"
+  ]
+}
