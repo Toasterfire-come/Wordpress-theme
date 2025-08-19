@@ -1,0 +1,384 @@
+/*
+ * Dark Mode Styles for Retail Trade Scanner Theme
+ * Comprehensive dark mode implementation with accessibility support
+ */
+
+/* Dark Mode Color Variables */
+.dark-mode {
+  --background-primary: #0f172a;
+  --background-secondary: #1e293b;
+  --background-tertiary: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-primary: #475569;
+  --border-secondary: #64748b;
+  --accent-color: #059669;
+  --accent-hover: #047857;
+  --danger-color: #dc2626;
+  --warning-color: #d97706;
+  --success-color: #059669;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #334155;
+  --input-border: #475569;
+  --button-primary-bg: #059669;
+  --button-primary-hover: #047857;
+  --button-secondary-bg: #374151;
+  --button-secondary-hover: #4b5563;
+}
+
+/* Global Dark Mode Styles */
+.dark-mode {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode * {
+  border-color: var(--border-primary);
+}
+
+/* Header Dark Mode */
+.dark-mode .site-header {
+  background-color: var(--background-secondary);
+  border-bottom-color: var(--border-primary);
+}
+
+.dark-mode .logo {
+  color: var(--text-primary);
+}
+
+.dark-mode .main-navigation a {
+  color: var(--text-secondary);
+}
+
+.dark-mode .main-navigation a:hover {
+  color: var(--text-primary);
+}
+
+/* Search Input Dark Mode */
+.dark-mode .search-input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.dark-mode .search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode .search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+}
+
+.dark-mode .search-results-dropdown {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.dark-mode .search-result-item {
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .search-result-item:hover {
+  background-color: var(--background-tertiary);
+}
+
+/* Card Dark Mode */
+.dark-mode .card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* Button Dark Mode */
+.dark-mode .btn {
+  border-color: var(--border-primary);
+}
+
+.dark-mode .btn-primary {
+  background-color: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: white;
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: var(--button-primary-hover);
+  border-color: var(--button-primary-hover);
+}
+
+.dark-mode .btn-outline {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-secondary);
+}
+
+.dark-mode .btn-outline:hover {
+  background-color: var(--button-secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+/* Form Elements Dark Mode */
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.dark-mode input:focus,
+.dark-mode select:focus,
+.dark-mode textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode label {
+  color: var(--text-secondary);
+}
+
+/* Tables Dark Mode */
+.dark-mode table {
+  background-color: var(--card-bg);
+}
+
+.dark-mode th {
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.dark-mode td {
+  color: var(--text-secondary);
+  border-color: var(--border-primary);
+}
+
+.dark-mode tr:hover {
+  background-color: var(--background-tertiary);
+}
+
+/* Stock Cards Dark Mode */
+.dark-mode .stock-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.dark-mode .stock-card:hover {
+  background-color: var(--background-tertiary);
+}
+
+/* Market Status Dark Mode */
+.dark-mode .market-status {
+  color: var(--text-secondary);
+}
+
+/* Quick Filter Buttons Dark Mode */
+.dark-mode .quick-filter-btn {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-secondary);
+}
+
+.dark-mode .quick-filter-btn:hover {
+  background-color: var(--background-tertiary);
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.dark-mode .quick-filter-btn.active {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+/* Notifications Dark Mode */
+.dark-mode .rts-notification {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+}
+
+/* Loading Spinner Dark Mode */
+.dark-mode .loading-spinner {
+  border-color: var(--border-primary);
+  border-top-color: var(--accent-color);
+}
+
+/* News Articles Dark Mode */
+.dark-mode .news-article {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.dark-mode .news-article h2 a {
+  color: var(--text-primary);
+}
+
+.dark-mode .news-article p {
+  color: var(--text-secondary);
+}
+
+/* Portfolio Dark Mode */
+.dark-mode .portfolio-summary .summary-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* Dashboard Dark Mode */
+.dark-mode .dashboard-widget {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* Footer Dark Mode */
+.dark-mode .site-footer {
+  background-color: var(--background-secondary);
+  border-top-color: var(--border-primary);
+}
+
+.dark-mode .site-footer a {
+  color: var(--text-secondary);
+}
+
+.dark-mode .site-footer a:hover {
+  color: var(--text-primary);
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 50px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.dark-mode-toggle:hover {
+  background-color: var(--background-tertiary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .dark-mode-toggle {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text-primary);
+}
+
+/* Error States Dark Mode */
+.dark-mode .field-error {
+  color: var(--danger-color);
+}
+
+.dark-mode .has-error input {
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.dark-mode .has-success input {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* Mobile Dark Mode Adjustments */
+@media (max-width: 768px) {
+  .dark-mode .header-content {
+    background-color: var(--background-secondary);
+  }
+  
+  .dark-mode .mobile-menu {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+  }
+  
+  .dark-mode-toggle {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* High Contrast Dark Mode */
+@media (prefers-contrast: high) {
+  .dark-mode {
+    --background-primary: #000000;
+    --background-secondary: #1a1a1a;
+    --text-primary: #ffffff;
+    --border-primary: #ffffff;
+    --accent-color: #00ff88;
+  }
+}
+
+/* Reduced Motion Dark Mode */
+@media (prefers-reduced-motion: reduce) {
+  .dark-mode * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Print Dark Mode Override */
+@media print {
+  .dark-mode {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .dark-mode .card {
+    background-color: white !important;
+    border-color: black !important;
+  }
+  
+  .dark-mode-toggle {
+    display: none !important;
+  }
+}
+
+/* Focus Styles for Dark Mode */
+.dark-mode :focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Dark Mode System Preference Detection */
+@media (prefers-color-scheme: dark) {
+  :root:not(.dark-mode-disabled) {
+    --background-primary: #0f172a;
+    --background-secondary: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+  }
+  
+  /* Auto dark mode when system preference is dark */
+  body:not(.dark-mode):not(.light-mode) {
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+  }
+}
+
+/* Smooth Theme Transition */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.no-theme-transition * {
+  transition: none !important;
+}
