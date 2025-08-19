@@ -27,6 +27,9 @@ function retail_trade_scanner_setup() {
     add_theme_support('custom-logo');
     add_theme_support('customize-selective-refresh-widgets');
 
+    // Load translations
+    load_theme_textdomain('retail-trade-scanner', get_template_directory() . '/languages');
+
     // Register navigation menus
     register_nav_menus(array(
         'primary' => __('Primary Menu', 'retail-trade-scanner'),

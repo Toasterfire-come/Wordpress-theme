@@ -1,0 +1,14 @@
+/* Login Styles for Retail Trade Scanner */
+:root {
+  --primary-blue: #1e40af;
+  --primary-blue-hover: #1d4ed8;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-300: #cbd5e1;
+  --slate-600: #475569;
+}
+
+body.login { background: var(--slate-50); }
+#loginform { border: 1px solid var(--slate-300); border-radius: 12px; }
+#loginform .button-primary { background: var(--primary-blue); border-color: var(--primary-blue); }
+#loginform .button-primary:hover { background: var(--primary-blue-hover); border-color: var(--primary-blue-hover); }
